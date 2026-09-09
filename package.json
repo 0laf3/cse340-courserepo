@@ -1,0 +1,28 @@
+{
+  "name": "cse340-courserepo",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/0laf3/cse340-courserepo#readme",
+  "bugs": {
+    "url": "https://github.com/0laf3/cse340-courserepo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0laf3/cse340-courserepo.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ejs": "^6.0.1",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
