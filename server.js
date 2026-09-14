@@ -1,7 +1,9 @@
-
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
+
+import { testConnection } from './src/models/db.js';
+import { getAllOrganizations } from './src/models/organizations.js';
 
 // Define the application environment
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
@@ -15,8 +17,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 /**
-  * Configure Express middleware
-  */
+ * Configure Express middleware
+ */
+
 // Set EJS as the templating engine
 app.set('view engine', 'ejs');
 
@@ -27,44 +30,55 @@ app.set('views', path.join(__dirname, 'src/views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 /**
-  * Routes
-  */
+ * Routes
+ */
+
+// Home
 app.get('/', async (req, res) => {
     const title = 'Home';
+
     res.render('home', { title });
 });
 
+// Organizations
 app.get('/organizations', async (req, res) => {
-    const title = 'Our Partner organizations';
+    try {
+        const organizations = await getAllOrganizations();
 
-    const organizations = [
-        {
-            name: 'Green Harvest',
-            logo_filename: 'greenharvest-logo.png',
-            contact_email: 'info@example.com'
-        },
-        {
-            name: 'UnityServe',
-            logo_filename: 'unityserve-logo.png',
-            contact_email: 'contact@example.com'
-        }
-    ];
+        console.log('Organizations:', organizations);
 
-    res.render('organizations', { title, organizations });
+        res.render('organizations', {
+            title: 'Organizations',
+            organizations
+        });
+    } catch (error) {
+        console.error('Error fetching organizations:', error);
+        res.status(500).send('Server Error');
+    }
 });
 
+// Projects
 app.get('/projects', async (req, res) => {
     const title = 'Service Projects';
+
     res.render('projects', { title });
 });
 
+// Categories
 app.get('/categories', async (req, res) => {
     const title = 'Service Categories';
+
     res.render('categories', { title });
 });
 
+// Start server
+app.listen(PORT, async () => {
+    try {
+        await testConnection();
 
-app.listen(PORT, () => {
-  console.log(`Server is running at http://127.0.0.1:${PORT}`);
-  console.log(`Environment: ${NODE_ENV}`);
+        console.log(`Server is running at http://127.0.0.1:${PORT}`);
+        console.log(`Environment: ${NODE_ENV}`);
+    } catch (error) {
+        console.error('Error connecting to the database:', error);
+    }
 });
