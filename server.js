@@ -3,9 +3,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 import { testConnection } from './src/models/db.js';
-import { getAllOrganizations } from './src/models/organizations.js';
-import { getAllProjects } from './src/models/projects.js';
-import { getAllCategories } from './src/models/categories.js';
+import routes from './src/routes.js';
 
 // Define the application environment
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
@@ -25,6 +23,21 @@ const app = express();
 // Set EJS as the templating engine
 app.set('view engine', 'ejs');
 
+// Middleware to log all incoming requests
+app.use((req, res, next) => {
+    if (NODE_ENV === 'development') {
+        console.log(`${req.method} ${req.url}`);
+    }
+
+    next();
+});
+
+// Middleware to make NODE_ENV available to all templates
+app.use((req, res, next) => {
+    res.locals.NODE_ENV = NODE_ENV;
+    next();
+});
+
 // Tell Express where to find your templates
 app.set('views', path.join(__dirname, 'src/views'));
 
@@ -34,68 +47,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 /**
  * Routes
  */
+app.use('/', routes);
 
-// Home
-app.get('/', async (req, res) => {
-    const title = 'Home';
-
-    res.render('home', { title });
-});
-
-// Organizations
-app.get('/organizations', async (req, res) => {
-    try {
-        const organizations = await getAllOrganizations();
-
-        console.log('Organizations:', organizations);
-
-        res.render('organizations', {
-            title: 'Organizations',
-            organizations
-        });
-    } catch (error) {
-        console.error('Error fetching organizations:', error);
-        res.status(500).send('Server Error');
-    }
-});
-
-// Projects
-app.get('/projects', async (req, res) => {
-    try {
-        const projects = await getAllProjects();
-
-        console.log('Projects:', projects);
-
-        res.render('projects', {
-            title: 'Service Projects',
-            projects
-        });
-    } catch (error) {
-        console.error('Error fetching projects:', error);
-        res.status(500).send('Server Error');
-    }
-});
-
-// Categories
-app.get('/categories', async (req, res) => {
-    const title = 'Service Categories';
-
-    try {
-        const categories = await getAllCategories();
-
-        res.render('categories', {
-            title,
-            categories
-        });
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-
-        res.status(500).send('Unable to load service categories.');
-    }
-});
-
-
-// Start server
+/**
+ * Start server
+ */
 app.listen(PORT, async () => {
     try {
         await testConnection();
