@@ -1,6 +1,6 @@
 import pool from './db.js';
 
-export async function getAllCategories() {
+export const getAllCategories = async () => {
     try {
         const result = await pool.query(`
             SELECT category_id, name
@@ -13,4 +13,4 @@ export async function getAllCategories() {
         console.error("Error fetching categories:", error);
         throw error;
     }
-}
+};

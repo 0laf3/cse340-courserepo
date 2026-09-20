@@ -1,9 +1,8 @@
 import pool from './db.js';
-
 /**
  * Get all service projects along with their organization names.
  */
-export async function getAllProjects() {
+export const getAllProjects = async () => {
     try {
         const result = await pool.query(`
             SELECT
@@ -25,4 +24,4 @@ export async function getAllProjects() {
         console.error("Error fetching projects:", error);
         throw error;
     }
-}
+};
