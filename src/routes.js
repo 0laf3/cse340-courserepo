@@ -1,9 +1,16 @@
 import express from 'express';
 
 import { homePage } from './controllers/index.js';
-import { organizationsPage } from './controllers/organizations.js';
+
+import {
+    showOrganizationsPage,
+    showOrganizationDetailsPage
+} from './controllers/organizations.js';
+
 import { projectsPage } from './controllers/projects.js';
+
 import { categoriesPage } from './controllers/categories.js';
+
 import {
     testError,
     notFound,
@@ -16,7 +23,10 @@ const router = express.Router();
 router.get('/', homePage);
 
 // Organizations
-router.get('/organizations', organizationsPage);
+router.get('/organizations', showOrganizationsPage);
+
+// Organization details
+router.get('/organization/:id', showOrganizationDetailsPage);
 
 // Projects
 router.get('/projects', projectsPage);
