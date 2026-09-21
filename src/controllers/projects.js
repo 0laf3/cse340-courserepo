@@ -1,20 +1,49 @@
-import { getAllProjects } from '../models/projects.js';
+import {
+    getUpcomingProjects,
+    getProjectDetails
+} from "../models/projects.js"
+
+
+const NUMBER_OF_UPCOMING_PROJECTS = 5
+
 
 /**
- * Display all service projects.
+ * Display the upcoming service projects page.
  */
-export const projectsPage = async (req, res) => {
+export async function showProjectsPage(req, res) {
     try {
-        const projects = await getAllProjects();
+        const projects = await getUpcomingProjects(
+            NUMBER_OF_UPCOMING_PROJECTS
+        )
 
-        console.log('Projects:', projects);
-
-        res.render('projects', {
-            title: 'Service Projects',
+        res.render("projects", {
+            title: "Upcoming Service Projects",
             projects
-        });
+        })
     } catch (error) {
-        console.error('Error fetching projects:', error);
-        res.status(500).send('Server Error');
+        console.error("Error displaying projects page:", error)
+
+        res.status(500).send("Unable to display projects.")
     }
-};
+}
+
+
+/**
+ * Display the details of a single service project.
+ */
+export async function showProjectDetailsPage(req, res) {
+    try {
+        const id = req.params.id
+
+        const project = await getProjectDetails(id)
+
+        res.render("project", {
+            title: project.title,
+            project
+        })
+    } catch (error) {
+        console.error("Error displaying project details:", error)
+
+        res.status(500).send("Unable to display project details.")
+    }
+}

@@ -7,7 +7,10 @@ import {
     showOrganizationDetailsPage
 } from './controllers/organizations.js';
 
-import { projectsPage } from './controllers/projects.js';
+import {
+    showProjectsPage,
+    showProjectDetailsPage
+} from './controllers/projects.js';
 
 import { categoriesPage } from './controllers/categories.js';
 
@@ -29,7 +32,10 @@ router.get('/organizations', showOrganizationsPage);
 router.get('/organization/:id', showOrganizationDetailsPage);
 
 // Projects
-router.get('/projects', projectsPage);
+router.get('/projects', showProjectsPage);
+
+// Project details
+router.get('/project/:id', showProjectDetailsPage);
 
 // Categories
 router.get('/categories', categoriesPage);

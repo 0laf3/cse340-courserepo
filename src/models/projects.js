@@ -1,55 +1,90 @@
-import db from './db.js';
+import pool from "./db.js"
 
 /**
- * Get all service projects along with their organization names.
+ * Get all service projects for a specific organization.
  */
-const getAllProjects = async () => {
-    const query = `
-        SELECT
-            sp.project_id,
-            sp.title,
-            sp.organization_id,
-            o.name AS organization_name,
-            sp.description,
-            sp.location,
-            sp.date
-        FROM service_project AS sp
-        JOIN organizations AS o
-            ON sp.organization_id = o.organization_id
-        ORDER BY sp.date;
-    `;
+export async function getProjectsByOrganizationId(organization_id) {
+    try {
+        const result = await pool.query(
+            `SELECT
+                sp.project_id,
+                sp.title,
+                sp.description,
+                sp.date,
+                sp.location,
+                sp.organization_id,
+                o.name AS organization_name
+            FROM service_project AS sp
+            JOIN organizations AS o
+                ON sp.organization_id = o.organization_id
+            WHERE sp.organization_id = $1
+            ORDER BY sp.date ASC`,
+            [organization_id]
+        )
 
-    const result = await db.query(query);
+        return result.rows
+    } catch (error) {
+        console.error("Error fetching projects by organization:", error)
+        throw error
+    }
+}
 
-    return result.rows;
-};
 
 /**
- * Get all service projects associated with a specific organization.
+ * Get the next number_of_projects upcoming service projects.
  */
-const getProjectsByOrganizationId = async (organizationId) => {
-    const query = `
-        SELECT
-            project_id,
-            organization_id,
-            title,
-            description,
-            location,
-            date
-        FROM service_project
-        WHERE organization_id = $1
-        ORDER BY date;
-    `;
+export async function getUpcomingProjects(number_of_projects) {
+    try {
+        const result = await pool.query(
+            `SELECT
+                sp.project_id,
+                sp.title,
+                sp.description,
+                sp.date,
+                sp.location,
+                sp.organization_id,
+                o.name AS organization_name
+            FROM service_project AS sp
+            JOIN organizations AS o
+                ON sp.organization_id = o.organization_id
+            WHERE sp.date >= CURRENT_TIMESTAMP
+            ORDER BY sp.date ASC
+            LIMIT $1`,
+            [number_of_projects]
+        )
 
-    const queryParams = [organizationId];
+        return result.rows
+    } catch (error) {
+        console.error("Error fetching upcoming projects:", error)
+        throw error
+    }
+}
 
-    const result = await db.query(query, queryParams);
 
-    return result.rows;
-};
+/**
+ * Get a single service project by its ID.
+ */
+export async function getProjectDetails(id) {
+    try {
+        const result = await pool.query(
+            `SELECT
+                sp.project_id,
+                sp.title,
+                sp.description,
+                sp.date,
+                sp.location,
+                sp.organization_id,
+                o.name AS organization_name
+            FROM service_project AS sp
+            JOIN organizations AS o
+                ON sp.organization_id = o.organization_id
+            WHERE sp.project_id = $1`,
+            [id]
+        )
 
-// Export the model functions
-export {
-    getAllProjects,
-    getProjectsByOrganizationId
+        return result.rows[0]
+    } catch (error) {
+        console.error("Error fetching project details:", error)
+        throw error
+    }
 };

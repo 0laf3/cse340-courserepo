@@ -1,14 +1,28 @@
+<%- include("partials/header") %>
 
-<%- include('partials/header') %>
 <main>
     <h1><%= title %></h1>
-    <h2>Upcoming Service Projects</h2>
+
     <% projects.forEach(project => { %>
-    <h2><%= project.title %></h2>
-    <p>Organization: <%= project.organization_name %></p>
-    <p><%= project.description %></p>
-    <p>Location: <%= project.location %></p>
-    <p>Date: <%= project.date %></p>
-<% }); %>
+
+        <div class="project-card">
+
+            <h2>
+                <a href="/project/<%= project.project_id %>">
+                    <%= project.title %>
+                </a>
+            </h2>
+
+            <p>
+                Organization:
+                <a href="/organization/<%= project.organization_id %>">
+                    <%= project.organization_name %>
+                </a>
+            </p>
+
+        </div>
+
+    <% }) %>
 </main>
-<%- include('partials/footer') %>
+
+<%- include("partials/footer") %>
