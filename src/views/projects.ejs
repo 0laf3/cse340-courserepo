@@ -3,26 +3,48 @@
 <main>
     <h1><%= title %></h1>
 
-    <% projects.forEach(project => { %>
+    <p>
+        Here are the next five upcoming service projects.
+    </p>
 
-        <div class="project-card">
+    <% if (projects.length > 0) { %>
 
-            <h2>
-                <a href="/project/<%= project.project_id %>">
-                    <%= project.title %>
-                </a>
-            </h2>
+        <ul>
+            <% projects.forEach(project => { %>
 
-            <p>
-                Organization:
-                <a href="/organization/<%= project.organization_id %>">
-                    <%= project.organization_name %>
-                </a>
-            </p>
+                <li>
+                    <h2>
+                        <a href="/project/<%= project.project_id %>">
+                            <%= project.title %>
+                        </a>
+                    </h2>
 
-        </div>
+                    <p>
+                        Organization:
+                        <a href="/organization/<%= project.organization_id %>">
+                            <%= project.organization_name %>
+                        </a>
+                    </p>
 
-    <% }) %>
+                    <p>
+                        Date: <%= project.date %>
+                    </p>
+
+                    <p>
+                        Location: <%= project.location %>
+                    </p>
+                </li>
+
+            <% }) %>
+        </ul>
+
+    <% } else { %>
+
+        <p>
+            There are currently no upcoming service projects.
+        </p>
+
+    <% } %>
 </main>
 
 <%- include("partials/footer") %>

@@ -6,7 +6,8 @@ import pool from "./db.js"
 export async function getProjectsByOrganizationId(organization_id) {
     try {
         const result = await pool.query(
-            `SELECT
+            `
+            SELECT
                 sp.project_id,
                 sp.title,
                 sp.description,
@@ -18,7 +19,8 @@ export async function getProjectsByOrganizationId(organization_id) {
             JOIN organizations AS o
                 ON sp.organization_id = o.organization_id
             WHERE sp.organization_id = $1
-            ORDER BY sp.date ASC`,
+            ORDER BY sp.date ASC
+            `,
             [organization_id]
         )
 
@@ -29,14 +31,16 @@ export async function getProjectsByOrganizationId(organization_id) {
     }
 }
 
-
 /**
- * Get the next number_of_projects upcoming service projects.
+ * Get the next upcoming service projects.
+ *
+ * The number of projects is controlled by the controller.
  */
 export async function getUpcomingProjects(number_of_projects) {
     try {
         const result = await pool.query(
-            `SELECT
+            `
+            SELECT
                 sp.project_id,
                 sp.title,
                 sp.description,
@@ -49,7 +53,8 @@ export async function getUpcomingProjects(number_of_projects) {
                 ON sp.organization_id = o.organization_id
             WHERE sp.date >= CURRENT_TIMESTAMP
             ORDER BY sp.date ASC
-            LIMIT $1`,
+            LIMIT $1
+            `,
             [number_of_projects]
         )
 
@@ -60,14 +65,15 @@ export async function getUpcomingProjects(number_of_projects) {
     }
 }
 
-
 /**
- * Get a single service project by its ID.
+ * Get the details of one service project,
+ * including its organization and categories.
  */
 export async function getProjectDetails(id) {
     try {
-        const result = await pool.query(
-            `SELECT
+        const projectResult = await pool.query(
+            `
+            SELECT
                 sp.project_id,
                 sp.title,
                 sp.description,
@@ -78,13 +84,39 @@ export async function getProjectDetails(id) {
             FROM service_project AS sp
             JOIN organizations AS o
                 ON sp.organization_id = o.organization_id
-            WHERE sp.project_id = $1`,
+            WHERE sp.project_id = $1
+            `,
             [id]
         )
 
-        return result.rows[0]
+        if (projectResult.rows.length === 0) {
+            return null
+        }
+
+        const project = projectResult.rows[0]
+
+        /*
+         * Get all categories assigned to this project.
+         */
+        const categoryResult = await pool.query(
+            `
+            SELECT
+                c.category_id,
+                c.name
+            FROM categories AS c
+            JOIN project_categories AS pc
+                ON c.category_id = pc.category_id
+            WHERE pc.project_id = $1
+            ORDER BY c.name ASC
+            `,
+            [id]
+        )
+
+        project.categories = categoryResult.rows
+
+        return project
     } catch (error) {
         console.error("Error fetching project details:", error)
         throw error
     }
-};
+}

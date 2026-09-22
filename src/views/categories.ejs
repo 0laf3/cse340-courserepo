@@ -1,32 +1,31 @@
-<%- include('partials/header', { title: title }) %>
+<%- include("partials/header") %>
 
-<main class="categories-page">
+<main>
     <h1><%= title %></h1>
 
-    <p class="intro">
-        Explore the different categories of service opportunities available in our network.
-        Find a cause that matches your interests and make a positive impact in your community.
+    <p>
+        Browse service projects by category.
     </p>
 
-    <section class="categories-grid">
+    <% if (categories.length > 0) { %>
 
-        <% if (categories.length > 0) { %>
-
+        <ul>
             <% categories.forEach(category => { %>
 
-                <article class="category-card">
-                    <h2><%= category.name %></h2>
-                </article>
+                <li>
+                    <a href="/category/<%= category.category_id %>">
+                        <%= category.name %>
+                    </a>
+                </li>
 
-            <% }); %>
+            <% }) %>
+        </ul>
 
-        <% } else { %>
+    <% } else { %>
 
-            <p>No service categories are currently available.</p>
+        <p>No categories are available at this time.</p>
 
-        <% } %>
-
-    </section>
+    <% } %>
 </main>
 
-<%- include('partials/footer') %>
+<%- include("partials/footer") %>

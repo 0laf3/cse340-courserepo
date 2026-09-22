@@ -3,12 +3,10 @@ import {
     getProjectDetails
 } from "../models/projects.js"
 
-
 const NUMBER_OF_UPCOMING_PROJECTS = 5
 
-
 /**
- * Display the upcoming service projects page.
+ * Display the five next upcoming service projects.
  */
 export async function showProjectsPage(req, res) {
     try {
@@ -23,19 +21,26 @@ export async function showProjectsPage(req, res) {
     } catch (error) {
         console.error("Error displaying projects page:", error)
 
-        res.status(500).send("Unable to display projects.")
+        res.status(500).render("500", {
+            title: "Server Error"
+        })
     }
 }
 
-
 /**
- * Display the details of a single service project.
+ * Display the details of one service project.
  */
 export async function showProjectDetailsPage(req, res) {
     try {
         const id = req.params.id
 
         const project = await getProjectDetails(id)
+
+        if (!project) {
+            return res.status(404).render("404", {
+                title: "Project Not Found"
+            })
+        }
 
         res.render("project", {
             title: project.title,
@@ -44,6 +49,8 @@ export async function showProjectDetailsPage(req, res) {
     } catch (error) {
         console.error("Error displaying project details:", error)
 
-        res.status(500).send("Unable to display project details.")
+        res.status(500).render("500", {
+            title: "Server Error"
+        })
     }
 }
