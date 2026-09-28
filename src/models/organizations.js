@@ -1,49 +1,90 @@
-import db from './db.js';
+import pool from "./db.js"
 
 /**
  * Get all organizations.
  */
-const getAllOrganizations = async () => {
-    const query = `
-        SELECT
-            organization_id,
-            name,
-            description,
-            contact_email,
-            logo_filename
-        FROM organizations
-        ORDER BY name;
-    `;
+export async function getAllOrganizations() {
+    try {
+        const result = await pool.query(`
+            SELECT
+                organization_id,
+                name,
+                description,
+                contact_email,
+                logo_filename
+            FROM organizations
+            ORDER BY name ASC
+        `)
 
-    const result = await db.query(query);
-
-    return result.rows;
-};
+        return result.rows
+    } catch (error) {
+        console.error("Error fetching organizations:", error)
+        throw error
+    }
+}
 
 /**
- * Get details for a specific organization.
+ * Get the details of one organization.
  */
-const getOrganizationDetails = async (organizationId) => {
-    const query = `
-        SELECT
-            organization_id,
-            name,
-            description,
-            contact_email,
-            logo_filename
-        FROM organizations
-        WHERE organization_id = $1;
-    `;
+export async function getOrganizationDetails(id) {
+    try {
+        const result = await pool.query(
+            `
+            SELECT
+                organization_id,
+                name,
+                description,
+                contact_email,
+                logo_filename
+            FROM organizations
+            WHERE organization_id = $1
+            `,
+            [id]
+        )
 
-    const queryParams = [organizationId];
+        return result.rows[0]
+    } catch (error) {
+        console.error("Error fetching organization details:", error)
+        throw error
+    }
+}
 
-    const result = await db.query(query, queryParams);
+/**
+ * Create a new organization in the database.
+ *
+ * @param {string} name - The organization name.
+ * @param {string} description - The organization description.
+ * @param {string} contactEmail - The organization contact email.
+ * @param {string} logoFilename - The organization's logo filename.
+ * @returns {number} The ID of the newly created organization.
+ */
+export async function createOrganization(
+    name,
+    description,
+    contactEmail,
+    logoFilename
+) {
+    const result = await pool.query(
+        `
+        INSERT INTO organizations
+            (name, description, contact_email, logo_filename)
+        VALUES
+            ($1, $2, $3, $4)
+        RETURNING organization_id
+        `,
+        [name, description, contactEmail, logoFilename]
+    )
 
-    return result.rows.length > 0 ? result.rows[0] : null;
-};
+    if (result.rows.length === 0) {
+        throw new Error("Failed to create organization")
+    }
 
-// Export the model functions
-export {
-    getAllOrganizations,
-    getOrganizationDetails
-};
+    if (process.env.ENABLE_SQL_LOGGING === "true") {
+        console.log(
+            "Created new organization with ID:",
+            result.rows[0].organization_id
+        )
+    }
+
+    return result.rows[0].organization_id
+}

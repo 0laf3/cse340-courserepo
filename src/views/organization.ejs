@@ -1,34 +1,57 @@
-<%- include('partials/header', { title: title }) %>
+<%- include("partials/header") %>
 
 <main>
+    <h1><%= organization.name %></h1>
 
-    <h1><%= title %></h1>
+    <section>
+        <h2>Organization Details</h2>
 
-    <h2><%= organizationDetails.name %></h2>
+        <% if (organization.description) { %>
+            <p>
+                <strong>Description:</strong>
+                <%= organization.description %>
+            </p>
+        <% } %>
 
-    <img
-        src="/images/<%= organizationDetails.logo_filename %>"
-        alt="<%= organizationDetails.name %> logo"
-    >
+        <% if (organization.contact_email) { %>
+            <p>
+                <strong>Contact Email:</strong>
+                <%= organization.contact_email %>
+            </p>
+        <% } %>
+    </section>
 
-    <p>
-        Description: <%= organizationDetails.description %>
-    </p>
+    <section>
+        <h2>Service Projects</h2>
 
-    <h3>Service Projects</h3>
+        <% if (projects.length > 0) { %>
 
-    <ul>
-        <% projects.forEach(project => { %>
+            <ul>
+                <% projects.forEach(project => { %>
 
-            <li>
-                <a href="/project/<%= project.project_id %>">
-                    <%= project.title %>
-                </a>
-            </li>
+                    <li>
+                        <a href="/project/<%= project.project_id %>">
+                            <%= project.title %>
+                        </a>
 
-        <% }) %>
-    </ul>
+                        <% if (project.date) { %>
+                            <span>
+                                — <%= project.date %>
+                            </span>
+                        <% } %>
+                    </li>
 
+                <% }) %>
+            </ul>
+
+        <% } else { %>
+
+            <p>
+                This organization currently has no service projects.
+            </p>
+
+        <% } %>
+    </section>
 </main>
 
-<%- include('partials/footer') %>
+<%- include("partials/footer") %>

@@ -4,7 +4,9 @@ import { homePage } from "./controllers/index.js"
 
 import {
     showOrganizationsPage,
-    showOrganizationDetailsPage
+    showOrganizationDetailsPage,
+    showNewOrganizationForm,
+    processNewOrganizationForm
 } from "./controllers/organizations.js"
 
 import {
@@ -25,29 +27,90 @@ import {
 
 const router = express.Router()
 
+// ========================================
 // Home
+// ========================================
+
 router.get("/", homePage)
 
+
+// ========================================
 // Organizations
-router.get("/organizations", showOrganizationsPage)
+// ========================================
+
+// List all organizations
+router.get(
+    "/organizations",
+    showOrganizationsPage
+)
 
 // Organization details
-router.get("/organization/:id", showOrganizationDetailsPage)
+router.get(
+    "/organization/:id",
+    showOrganizationDetailsPage
+)
+
+// Display new organization form
+router.get(
+    "/new-organization",
+    showNewOrganizationForm
+)
+
+// Process new organization form
+router.post(
+    "/new-organization",
+    processNewOrganizationForm
+)
+
+
+// ========================================
+// Projects
+// ========================================
 
 // Upcoming projects
-router.get("/projects", showProjectsPage)
+router.get(
+    "/projects",
+    showProjectsPage
+)
 
 // Project details
-router.get("/project/:id", showProjectDetailsPage)
+router.get(
+    "/project/:id",
+    showProjectDetailsPage
+)
 
+
+// ========================================
 // Categories
-router.get("/categories", categoriesPage)
+// ========================================
+
+// List all categories
+router.get(
+    "/categories",
+    categoriesPage
+)
 
 // Category details
-router.get("/category/:id", categoryDetailsPage)
+router.get(
+    "/category/:id",
+    categoryDetailsPage
+)
+
+
+// ========================================
+// Error Testing
+// ========================================
 
 // Test route for 500 errors
-router.get("/test-error", testError)
+router.get(
+    "/test-error",
+    testError
+)
+
+
+// ========================================
+// Error Handling
+// ========================================
 
 // 404 handler
 router.use(notFound)

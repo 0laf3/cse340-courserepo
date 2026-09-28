@@ -1,64 +1,59 @@
-import express from 'express';
-import { fileURLToPath } from 'url';
-import path from 'path';
+import express from "express"
+import path from "path"
+import { fileURLToPath } from "url"
 
-import { testConnection } from './src/models/db.js';
-import routes from './src/routes.js';
+import routes from "./src/routes.js"
 
-// Define the application environment
-const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-// Define the port number the server will listen on
-const PORT = process.env.PORT || 3000;
+const app = express()
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const PORT = process.env.PORT || 3000
 
-const app = express();
+// ========================================
+// EJS
+// ========================================
 
-/**
- * Configure Express middleware
- */
+app.set("view engine", "ejs")
+app.set("views", path.join(__dirname, "src", "views"))
 
-// Set EJS as the templating engine
-app.set('view engine', 'ejs');
 
-// Middleware to log all incoming requests
+// ========================================
+// Parse POST request data
+// ========================================
+
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+
+// Make environment information available to EJS views
 app.use((req, res, next) => {
-    if (NODE_ENV === 'development') {
-        console.log(`${req.method} ${req.url}`);
-    }
+    res.locals.NODE_ENV = process.env.NODE_ENV || "development"
+    next()
+})
 
-    next();
-});
+// ========================================
+// Static files
+// ========================================
 
-// Middleware to make NODE_ENV available to all templates
-app.use((req, res, next) => {
-    res.locals.NODE_ENV = NODE_ENV;
-    next();
-});
+app.use(
+    express.static(
+        path.join(__dirname, "public")
+    )
+)
 
-// Tell Express where to find your templates
-app.set('views', path.join(__dirname, 'src/views'));
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
+// ========================================
+// Routes
+// ========================================
 
-/**
- * Routes
- */
-app.use('/', routes);
+app.use("/", routes)
 
-/**
- * Start server
- */
-app.listen(PORT, async () => {
-    try {
-        await testConnection();
 
-        console.log(`Server is running at http://127.0.0.1:${PORT}`);
-        console.log(`Environment: ${NODE_ENV}`);
-    } catch (error) {
-        console.error('Error connecting to the database:', error);
-    }
-});
+// ========================================
+// Start server
+// ========================================
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+})

@@ -1,53 +1,96 @@
 import {
     getAllOrganizations,
-    getOrganizationDetails
-} from '../models/organizations.js';
+    getOrganizationDetails,
+    createOrganization
+} from "../models/organizations.js"
 
-import {
-    getProjectsByOrganizationId
-} from '../models/projects.js';
+import { getProjectsByOrganizationId } from "../models/projects.js"
 
 /**
  * Display all organizations.
  */
-export const showOrganizationsPage = async (req, res) => {
+export async function showOrganizationsPage(req, res) {
     try {
-        const organizations = await getAllOrganizations();
+        const organizations = await getAllOrganizations()
 
-        console.log('Organizations:', organizations);
-
-        res.render('organizations', {
-            title: 'Organizations',
+        res.render("organizations", {
+            title: "Partner Organizations",
             organizations
-        });
+        })
     } catch (error) {
-        console.error('Error fetching organizations:', error);
-        res.status(500).send('Server Error');
+        console.error("Error displaying organizations page:", error)
+
+        res.status(500).render("500", {
+            title: "Server Error"
+        })
     }
-};
+}
 
 /**
- * Display details for a specific organization.
+ * Display the details of one organization
+ * and all projects belonging to that organization.
  */
-export const showOrganizationDetailsPage = async (req, res) => {
+export async function showOrganizationDetailsPage(req, res) {
     try {
-        const organizationId = req.params.id;
+        const id = req.params.id
 
-        const organizationDetails =
-            await getOrganizationDetails(organizationId);
+        const organization = await getOrganizationDetails(id)
 
-        const projects =
-            await getProjectsByOrganizationId(organizationId);
+        if (!organization) {
+            return res.status(404).render("404", {
+                title: "Organization Not Found"
+            })
+        }
 
-        const title = 'Organization Details';
+        const projects = await getProjectsByOrganizationId(id)
 
-        res.render('organization', {
-            title,
-            organizationDetails,
+        res.render("organization", {
+            title: organization.name,
+            organization,
             projects
-        });
+        })
     } catch (error) {
-        console.error('Error fetching organization details:', error);
-        res.status(500).send('Server Error');
+        console.error(
+            "Error displaying organization details:",
+            error
+        )
+
+        res.status(500).render("500", {
+            title: "Server Error"
+        })
     }
-};
+}
+
+/**
+ * Display the new organization form.
+ */
+export async function showNewOrganizationForm(req, res) {
+    const title = "Add New Organization"
+
+    res.render("new-organization", {
+        title
+    })
+}
+
+/**
+ * Process the new organization form.
+ */
+export async function processNewOrganizationForm(req, res) {
+    const {
+        name,
+        description,
+        contactEmail
+    } = req.body
+
+    // Use a placeholder logo until logo upload is added later.
+    const logoFilename = "placeholder-logo.png"
+
+    const organizationId = await createOrganization(
+        name,
+        description,
+        contactEmail,
+        logoFilename
+    )
+
+    res.redirect(`/organization/${organizationId}`)
+}
