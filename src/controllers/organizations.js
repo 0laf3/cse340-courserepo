@@ -4,7 +4,9 @@ import {
     createOrganization
 } from "../models/organizations.js"
 
-import { getProjectsByOrganizationId } from "../models/projects.js"
+import {
+    getProjectsByOrganizationId
+} from "../models/projects.js"
 
 /**
  * Display all organizations.
@@ -18,7 +20,10 @@ export async function showOrganizationsPage(req, res) {
             organizations
         })
     } catch (error) {
-        console.error("Error displaying organizations page:", error)
+        console.error(
+            "Error displaying organizations page:",
+            error
+        )
 
         res.status(500).render("500", {
             title: "Server Error"
@@ -65,10 +70,8 @@ export async function showOrganizationDetailsPage(req, res) {
  * Display the new organization form.
  */
 export async function showNewOrganizationForm(req, res) {
-    const title = "Add New Organization"
-
     res.render("new-organization", {
-        title
+        title: "Add New Organization"
     })
 }
 
@@ -76,21 +79,44 @@ export async function showNewOrganizationForm(req, res) {
  * Process the new organization form.
  */
 export async function processNewOrganizationForm(req, res) {
-    const {
-        name,
-        description,
-        contactEmail
-    } = req.body
+    try {
+        const {
+            name,
+            description,
+            contactEmail
+        } = req.body
 
-    // Use a placeholder logo until logo upload is added later.
-    const logoFilename = "placeholder-logo.png"
+        const logoFilename = "placeholder-logo.png"
 
-    const organizationId = await createOrganization(
-        name,
-        description,
-        contactEmail,
-        logoFilename
-    )
+        const organizationId = await createOrganization(
+            name,
+            description,
+            contactEmail,
+            logoFilename
+        )
 
-    res.redirect(`/organization/${organizationId}`)
+        // Store a success flash message.
+        req.flash(
+            "success",
+            "Organization added successfully!"
+        )
+
+        // Redirect to the new organization.
+        res.redirect(`/organization/${organizationId}`)
+    } catch (error) {
+        console.error(
+            "Error creating organization:",
+            error
+        )
+
+        // Store an error flash message.
+        req.flash(
+            "error",
+            "There was a problem adding the organization."
+        )
+
+        res.status(500).render("new-organization", {
+            title: "Add New Organization"
+        })
+    }
 }
