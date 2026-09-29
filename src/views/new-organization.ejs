@@ -1,44 +1,92 @@
 <%- include("partials/header") %>
 
-<main>
-    <h1><%= title %></h1>
+<main class="container">
 
-    <form action="/new-organization" method="POST">
+    <h1>Add New Organization</h1>
+
+    <form
+        action="/new-organization"
+        method="POST"
+    >
+
+        <!-- ==================================
+             Organization Name
+             ================================== -->
 
         <div class="form-group">
-            <label for="name">Organization Name</label>
+
+            <label for="name">
+                Organization Name
+            </label>
 
             <input
                 type="text"
                 id="name"
                 name="name"
-            />
+                required
+                maxlength="150"
+                placeholder="Enter organization name"
+            >
+
         </div>
 
+
+        <!-- ==================================
+             Organization Description
+             ================================== -->
+
         <div class="form-group">
-            <label for="description">Description</label>
+
+            <label for="description">
+                Description
+            </label>
 
             <textarea
                 id="description"
                 name="description"
+                required
+                maxlength="500"
+                placeholder="Enter organization description"
+                rows="6"
             ></textarea>
+
         </div>
+
+
+        <!-- ==================================
+             Contact Email
+             ================================== -->
 
         <div class="form-group">
-            <label for="contactEmail">Contact Email</label>
+
+            <label for="contactEmail">
+                Contact Email
+            </label>
 
             <input
-                type="text"
+                type="email"
                 id="contactEmail"
                 name="contactEmail"
-            />
+                required
+                placeholder="example@email.com"
+            >
+
         </div>
 
-        <button type="submit">
-            Create Organization
+
+        <!-- ==================================
+             Submit
+             ================================== -->
+
+        <button
+            type="submit"
+        >
+            Add Organization
         </button>
 
     </form>
+
 </main>
 
-<%- include("partials/footer") %>
+</body>
+</html>

@@ -1,38 +1,41 @@
-import express from "express"
+import express from "express";
 
-import { homePage } from "./controllers/index.js"
+import { homePage } from "./controllers/index.js";
 
 import {
     showOrganizationsPage,
     showOrganizationDetailsPage,
     showNewOrganizationForm,
-    processNewOrganizationForm
-} from "./controllers/organizations.js"
+    processNewOrganizationForm,
+    organizationValidation
+} from "./controllers/organizations.js";
 
 import {
     showProjectsPage,
     showProjectDetailsPage
-} from "./controllers/projects.js"
+} from "./controllers/projects.js";
 
 import {
     categoriesPage,
     categoryDetailsPage
-} from "./controllers/categories.js"
+} from "./controllers/categories.js";
 
 import {
     testError,
     notFound,
     errorHandler
-} from "./controllers/errors.js"
+} from "./controllers/errors.js";
 
-const router = express.Router()
+const router = express.Router();
 
 // ========================================
 // Home
 // ========================================
 
-router.get("/", homePage)
-
+router.get(
+    "/",
+    homePage
+);
 
 // ========================================
 // Organizations
@@ -42,26 +45,27 @@ router.get("/", homePage)
 router.get(
     "/organizations",
     showOrganizationsPage
-)
+);
 
 // Organization details
 router.get(
     "/organization/:id",
     showOrganizationDetailsPage
-)
+);
 
 // Display new organization form
 router.get(
     "/new-organization",
     showNewOrganizationForm
-)
+);
 
 // Process new organization form
+// Validation runs before the controller
 router.post(
     "/new-organization",
+    organizationValidation,
     processNewOrganizationForm
-)
-
+);
 
 // ========================================
 // Projects
@@ -71,14 +75,13 @@ router.post(
 router.get(
     "/projects",
     showProjectsPage
-)
+);
 
 // Project details
 router.get(
     "/project/:id",
     showProjectDetailsPage
-)
-
+);
 
 // ========================================
 // Categories
@@ -88,14 +91,13 @@ router.get(
 router.get(
     "/categories",
     categoriesPage
-)
+);
 
 // Category details
 router.get(
     "/category/:id",
     categoryDetailsPage
-)
-
+);
 
 // ========================================
 // Error Testing
@@ -105,17 +107,16 @@ router.get(
 router.get(
     "/test-error",
     testError
-)
-
+);
 
 // ========================================
 // Error Handling
 // ========================================
 
 // 404 handler
-router.use(notFound)
+router.use(notFound);
 
 // Global error handler
-router.use(errorHandler)
+router.use(errorHandler);
 
-export default router
+export default router;

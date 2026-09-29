@@ -13,17 +13,19 @@ import { testConnection } from "./src/models/db.js";
 
 const app = express();
 
-// Define the application environment
-const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || "development";
+const NODE_ENV =
+    process.env.NODE_ENV?.toLowerCase() || "development";
 
-// Define the port
 const PORT = process.env.PORT || 3000;
 
-// Define the session secret
 const SESSION_SECRET =
-    process.env.SESSION_SECRET || "development-secret-change-this";
+    process.env.SESSION_SECRET ||
+    "development-secret-change-this";
 
-// Get the current file and directory paths
+// ========================================
+// File paths
+// ========================================
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -31,24 +33,28 @@ const __dirname = path.dirname(__filename);
 // EJS configuration
 // ========================================
 
-// Set EJS as the view engine
-app.set("view engine", "ejs");
+app.set(
+    "view engine",
+    "ejs"
+);
 
-// Tell Express where the EJS views are located
-app.set("views", path.join(__dirname, "src", "views"));
+app.set(
+    "views",
+    path.join(__dirname, "src", "views")
+);
 
 // ========================================
 // Request parsing middleware
 // ========================================
 
-// Parse URL-encoded form data
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+    extended: true
+}));
 
-// Parse JSON request bodies
 app.use(express.json());
 
 // ========================================
-// Session management
+// Session middleware
 // ========================================
 
 app.use(
@@ -63,7 +69,8 @@ app.use(
 );
 
 // ========================================
-// Flash messages
+// Flash message middleware
+// IMPORTANT: Must come AFTER session
 // ========================================
 
 app.use(flash);
@@ -72,14 +79,13 @@ app.use(flash);
 // Global template variables
 // ========================================
 
-// Make NODE_ENV available to all EJS templates
 app.use((req, res, next) => {
     res.locals.NODE_ENV = NODE_ENV;
     next();
 });
 
 // ========================================
-// Development request logging
+// Development logging
 // ========================================
 
 app.use((req, res, next) => {
@@ -92,30 +98,13 @@ app.use((req, res, next) => {
 
 // ========================================
 // Static files
+// CSS, images, JavaScript
 // ========================================
-//
-// Files inside:
-//
-// public/css/
-// public/images/
-// public/js/
-//
-// are available from:
-//
-// /css/
-// /images/
-// /js/
-//
-// Example:
-// public/css/main.css
-// becomes:
-// http://localhost:3000/css/main.css
-//
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ========================================
-// Application routes
+// Routes
 // ========================================
 
 app.use("/", routes);
@@ -125,13 +114,24 @@ app.use("/", routes);
 // ========================================
 
 app.listen(PORT, async () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${NODE_ENV}`);
+    console.log(
+        `Server running on port ${PORT}`
+    );
+
+    console.log(
+        `Environment: ${NODE_ENV}`
+    );
 
     try {
         await testConnection();
-        console.log("Database connection successful.");
+
+        console.log(
+            "Database connection successful."
+        );
     } catch (error) {
-        console.error("Database connection failed:", error);
+        console.error(
+            "Database connection failed:",
+            error
+        );
     }
 });
