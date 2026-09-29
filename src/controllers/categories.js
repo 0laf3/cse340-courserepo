@@ -1,8 +1,14 @@
 import {
     getAllCategories,
     getCategoryDetails,
-    getProjectsByCategoryId
+    getProjectsByCategoryId,
+    getCategoriesByServiceProjectId,
+    updateCategoryAssignments
 } from "../models/categories.js"
+
+import {
+    getProjectDetails
+} from "../models/projects.js"
 
 /**
  * Display all categories.
@@ -53,5 +59,103 @@ export async function categoryDetailsPage(req, res) {
         res.status(500).render("500", {
             title: "Server Error"
         })
+    }
+}
+
+/**
+ * Display the form for assigning categories to a project.
+ */
+export async function showAssignCategoriesForm(
+    req,
+    res,
+    next
+) {
+    try {
+        const projectId = req.params.projectId
+
+        const projectDetails =
+            await getProjectDetails(projectId)
+
+        if (!projectDetails) {
+            return res.status(404).render("404", {
+                title: "Project Not Found"
+            })
+        }
+
+        const categories =
+            await getAllCategories()
+
+        const assignedCategories =
+            await getCategoriesByServiceProjectId(
+                projectId
+            )
+
+        const title =
+            "Assign Categories to Project"
+
+        res.render("assign-categories", {
+            title,
+            projectId,
+            projectDetails,
+            categories,
+            assignedCategories
+        })
+    } catch (error) {
+        console.error(
+            "Error displaying assign categories form:",
+            error
+        )
+
+        next(error)
+    }
+}
+
+/**
+ * Process the category assignment form.
+ */
+export async function processAssignCategoriesForm(
+    req,
+    res
+) {
+    try {
+        const projectId = req.params.projectId
+
+        let selectedCategoryIds =
+            req.body.categoryIds || []
+
+        // Ensure selectedCategoryIds is always an array.
+        if (!Array.isArray(selectedCategoryIds)) {
+            selectedCategoryIds = [
+                selectedCategoryIds
+            ]
+        }
+
+        await updateCategoryAssignments(
+            projectId,
+            selectedCategoryIds
+        )
+
+        req.flash(
+            "success",
+            "Categories updated successfully."
+        )
+
+        return res.redirect(
+            `/project/${projectId}`
+        )
+    } catch (error) {
+        console.error(
+            "Error updating project categories:",
+            error
+        )
+
+        req.flash(
+            "error",
+            "There was an error updating the project categories."
+        )
+
+        return res.redirect(
+            `/project/${req.params.projectId}`
+        )
     }
 }

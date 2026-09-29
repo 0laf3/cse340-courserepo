@@ -23,7 +23,9 @@ import {
 
 import {
     categoriesPage,
-    categoryDetailsPage
+    categoryDetailsPage,
+    showAssignCategoriesForm,
+    processAssignCategoriesForm
 } from "./controllers/categories.js";
 
 import {
@@ -47,11 +49,13 @@ router.get(
 // Organizations
 // ========================================
 
+// List all organizations
 router.get(
     "/organizations",
     showOrganizationsPage
 );
 
+// Organization details
 router.get(
     "/organization/:id",
     showOrganizationDetailsPage
@@ -61,11 +65,13 @@ router.get(
 // New Organization
 // ========================================
 
+// Display new organization form
 router.get(
     "/new-organization",
     showNewOrganizationForm
 );
 
+// Process new organization form
 router.post(
     "/new-organization",
     organizationValidation,
@@ -76,11 +82,13 @@ router.post(
 // Edit Organization
 // ========================================
 
+// Display edit organization form
 router.get(
     "/edit-organization/:id",
     showEditOrganizationForm
 );
 
+// Process edit organization form
 router.post(
     "/edit-organization/:id",
     organizationEditValidation,
@@ -91,21 +99,25 @@ router.post(
 // Projects
 // ========================================
 
+// Upcoming projects
 router.get(
     "/projects",
     showProjectsPage
 );
 
+// Project details
 router.get(
     "/project/:id",
     showProjectDetailsPage
 );
 
+// Display new project form
 router.get(
     "/new-project",
     showNewProjectForm
 );
 
+// Process new project form
 router.post(
     "/new-project",
     projectValidation,
@@ -116,20 +128,39 @@ router.post(
 // Categories
 // ========================================
 
+// List all categories
 router.get(
     "/categories",
     categoriesPage
 );
 
+// Category details
 router.get(
     "/category/:id",
     categoryDetailsPage
 );
 
 // ========================================
+// Assign Categories to Project
+// ========================================
+
+// Display assign categories form
+router.get(
+    "/assign-categories/:projectId",
+    showAssignCategoriesForm
+);
+
+// Process assign categories form
+router.post(
+    "/assign-categories/:projectId",
+    processAssignCategoriesForm
+);
+
+// ========================================
 // Error Testing
 // ========================================
 
+// Test route for 500 errors
 router.get(
     "/test-error",
     testError
@@ -139,8 +170,10 @@ router.get(
 // Error Handling
 // ========================================
 
+// 404 handler
 router.use(notFound);
 
+// Global error handler
 router.use(errorHandler);
 
 export default router;
