@@ -7,7 +7,10 @@ import {
     showOrganizationDetailsPage,
     showNewOrganizationForm,
     processNewOrganizationForm,
-    organizationValidation
+    showEditOrganizationForm,
+    processEditOrganizationForm,
+    organizationValidation,
+    organizationEditValidation
 } from "./controllers/organizations.js";
 
 import {
@@ -53,6 +56,10 @@ router.get(
     showOrganizationDetailsPage
 );
 
+// ========================================
+// New Organization
+// ========================================
+
 // Display new organization form
 router.get(
     "/new-organization",
@@ -60,11 +67,27 @@ router.get(
 );
 
 // Process new organization form
-// Validation runs before the controller
 router.post(
     "/new-organization",
     organizationValidation,
     processNewOrganizationForm
+);
+
+// ========================================
+// Edit Organization
+// ========================================
+
+// Display edit organization form
+router.get(
+    "/edit-organization/:id",
+    showEditOrganizationForm
+);
+
+// Process edit organization form
+router.post(
+    "/edit-organization/:id",
+    organizationEditValidation,
+    processEditOrganizationForm
 );
 
 // ========================================

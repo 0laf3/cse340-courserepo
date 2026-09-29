@@ -6,7 +6,8 @@ import {
 import {
     getAllOrganizations,
     getOrganizationDetails,
-    createOrganization
+    createOrganization,
+    updateOrganization
 } from "../models/organizations.js";
 
 import {
@@ -70,6 +71,35 @@ export const organizationValidation = [
         .isEmail()
         .withMessage(
             "Please provide a valid email address"
+        )
+];
+
+// ========================================
+// Edit organization validation rules
+// ========================================
+
+export const organizationEditValidation = [
+
+    // Use the same validation rules as the
+    // new organization form.
+    ...organizationValidation,
+
+    // ========================================
+    // Logo filename
+    // ========================================
+
+    body("logoFilename")
+        .trim()
+        .escape()
+        .notEmpty()
+        .withMessage(
+            "Logo filename is required"
+        )
+        .isLength({
+            max: 255
+        })
+        .withMessage(
+            "Logo filename cannot exceed 255 characters"
         )
 ];
 
@@ -271,10 +301,6 @@ export async function processNewOrganizationForm(
             error
         );
 
-        // ========================================
-        // Database/server error message
-        // ========================================
-
         req.flash(
             "error",
             "There was a problem adding the organization."
@@ -285,6 +311,145 @@ export async function processNewOrganizationForm(
             {
                 title: "Add New Organization"
             }
+        );
+    }
+}
+
+// ========================================
+// Display edit organization form
+// ========================================
+
+export async function showEditOrganizationForm(
+    req,
+    res
+) {
+    try {
+
+        // Get organization ID from URL
+        const id = req.params.id;
+
+        // Get organization from database
+        const organizationDetails =
+            await getOrganizationDetails(id);
+
+        // Organization does not exist
+        if (!organizationDetails) {
+
+            return res.status(404).render(
+                "404",
+                {
+                    title: "Organization Not Found"
+                }
+            );
+        }
+
+        // Display edit form
+        res.render(
+            "edit-organization",
+            {
+                title: "Edit Organization",
+                organizationDetails
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error displaying edit organization form:",
+            error
+        );
+
+        res.status(500).render(
+            "500",
+            {
+                title: "Server Error"
+            }
+        );
+    }
+}
+
+// ========================================
+// Process edit organization form
+// ========================================
+
+export async function processEditOrganizationForm(
+    req,
+    res
+) {
+
+    // Get organization ID from URL
+    const organizationId = req.params.id;
+
+    // Check validation results
+    const results = validationResult(req);
+
+    // ========================================
+    // Validation failed
+    // ========================================
+
+    if (!results.isEmpty()) {
+
+        results.array().forEach((error) => {
+
+            req.flash(
+                "error",
+                error.msg
+            );
+
+        });
+
+        return res.redirect(
+            `/edit-organization/${organizationId}`
+        );
+    }
+
+    // ========================================
+    // Validation passed
+    // ========================================
+
+    try {
+
+        const {
+            name,
+            description,
+            contactEmail,
+            logoFilename
+        } = req.body;
+
+        // Update organization
+        await updateOrganization(
+            organizationId,
+            name,
+            description,
+            contactEmail,
+            logoFilename
+        );
+
+        // Success message
+        req.flash(
+            "success",
+            "Organization updated successfully!"
+        );
+
+        // Return to organization details
+        return res.redirect(
+            `/organization/${organizationId}`
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error updating organization:",
+            error
+        );
+
+        req.flash(
+            "error",
+            "There was a problem updating the organization."
+        );
+
+        return res.redirect(
+            `/edit-organization/${organizationId}`
         );
     }
 }
