@@ -13,6 +13,7 @@ import {
     processNewOrganizationForm,
     showEditOrganizationForm,
     processEditOrganizationForm,
+    processDeleteOrganization,
     organizationValidation,
     organizationEditValidation
 } from "./controllers/organizations.js"
@@ -67,6 +68,7 @@ router.get(
     showOrganizationsPage
 )
 
+
 // Organization details
 router.get(
     "/organization/:id",
@@ -83,6 +85,7 @@ router.get(
     "/new-organization",
     showNewOrganizationForm
 )
+
 
 // Process new organization form
 router.post(
@@ -102,11 +105,23 @@ router.get(
     showEditOrganizationForm
 )
 
+
 // Process edit organization form
 router.post(
     "/edit-organization/:id",
     organizationEditValidation,
     processEditOrganizationForm
+)
+
+
+// ========================================
+// Delete Organization
+// ========================================
+
+// Process delete organization
+router.post(
+    "/delete-organization/:id",
+    processDeleteOrganization
 )
 
 
@@ -119,6 +134,7 @@ router.get(
     "/projects",
     showProjectsPage
 )
+
 
 // Project details
 router.get(
@@ -136,6 +152,7 @@ router.get(
     "/new-project",
     showNewProjectForm
 )
+
 
 // Process new project form
 router.post(
@@ -155,6 +172,7 @@ router.get(
     showEditProjectForm
 )
 
+
 // Process edit project form
 router.post(
     "/edit-project/:id",
@@ -173,6 +191,7 @@ router.get(
     categoriesPage
 )
 
+
 // Category details
 router.get(
     "/category/:id",
@@ -190,6 +209,7 @@ router.get(
     showAssignCategoriesForm
 )
 
+
 // Process assign categories form
 router.post(
     "/assign-categories/:projectId",
@@ -201,7 +221,6 @@ router.post(
 // Error Testing
 // ========================================
 
-// Test route for 500 errors
 router.get(
     "/test-error",
     testError
@@ -216,6 +235,7 @@ router.get(
 router.use(
     notFound
 )
+
 
 // Global error handler
 router.use(

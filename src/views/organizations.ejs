@@ -1,52 +1,112 @@
 <%- include("partials/header") %>
 
 <main>
-    <h1><%= title %></h1>
+
+    <h1>
+        <%= title %>
+    </h1>
+
 
     <p>
-        Browse our partner organizations and their service projects.
+        <a href="/new-organization">
+            Add New Organization
+        </a>
     </p>
 
-    <% if (organizations.length > 0) { %>
 
-        <ul>
-            <% organizations.forEach(organization => { %>
+    <% if (
+        organizations &&
+        organizations.length > 0
+    ) { %>
 
-                <li>
+        <section>
+
+            <% organizations.forEach(
+                organization => {
+            %>
+
+                <article>
+
                     <h2>
-                        <img
-                             src="/images/<%= organization.logo_filename %>"
-                             alt="<%= organization.name %> logo"
-                >
-                        <a href="/organization/<%= organization.organization_id %>">
+                        <a
+                            href="/organization/<%= organization.organization_id %>"
+                        >
                             <%= organization.name %>
                         </a>
                     </h2>
 
-                    <% if (organization.description) { %>
+
+                    <% if (
+                        organization.description
+                    ) { %>
+
                         <p>
+                            <strong>
+                                Description:
+                            </strong>
+
                             <%= organization.description %>
                         </p>
+
                     <% } %>
 
-                </li>
+
+                    <% if (
+                        organization.contact_email
+                    ) { %>
+
+                        <p>
+                            <strong>
+                                Contact Email:
+                            </strong>
+
+                            <%= organization.contact_email %>
+                        </p>
+
+                    <% } %>
+
+
+                    <p>
+
+                        <a
+                            href="/edit-organization/<%= organization.organization_id %>"
+                        >
+                            Edit Organization
+                        </a>
+
+                    </p>
+
+
+                    <!-- Delete Organization -->
+
+                    <form
+                        action="/delete-organization/<%= organization.organization_id %>"
+                        method="POST"
+                        onsubmit="return confirm('Are you sure you want to delete this organization?');"
+                    >
+
+                        <button type="submit">
+                            Delete Organization
+                        </button>
+
+                    </form>
+
+                </article>
+
+                <hr>
 
             <% }) %>
-        </ul>
+
+        </section>
 
     <% } else { %>
 
         <p>
-            There are currently no organizations available.
+            No organizations have been added yet.
         </p>
 
     <% } %>
 
-    <p>
-        <a href="/new-organization">
-            Add a new organization
-        </a>
-    </p>
 </main>
 
 <%- include("partials/footer") %>
