@@ -1,5 +1,6 @@
 import pool from "./db.js"
 
+
 /**
  * Get all service projects for a specific organization.
  */
@@ -26,10 +27,14 @@ export async function getProjectsByOrganizationId(organization_id) {
 
         return result.rows
     } catch (error) {
-        console.error("Error fetching projects by organization:", error)
+        console.error(
+            "Error fetching projects by organization:",
+            error
+        )
         throw error
     }
 }
+
 
 /**
  * Get the next upcoming service projects.
@@ -60,10 +65,14 @@ export async function getUpcomingProjects(number_of_projects) {
 
         return result.rows
     } catch (error) {
-        console.error("Error fetching upcoming projects:", error)
+        console.error(
+            "Error fetching upcoming projects:",
+            error
+        )
         throw error
     }
 }
+
 
 /**
  * Get the details of one service project,
@@ -116,10 +125,14 @@ export async function getProjectDetails(id) {
 
         return project
     } catch (error) {
-        console.error("Error fetching project details:", error)
+        console.error(
+            "Error fetching project details:",
+            error
+        )
         throw error
     }
 }
+
 
 /**
  * Create a new service project.
@@ -162,12 +175,68 @@ export async function createProject(
         )
 
         if (result.rows.length === 0) {
-            throw new Error("Failed to create project")
+            throw new Error(
+                "Failed to create project"
+            )
         }
 
         return result.rows[0].project_id
     } catch (error) {
-        console.error("Error creating project:", error)
+        console.error(
+            "Error creating project:",
+            error
+        )
+        throw error
+    }
+}
+
+
+/**
+ * Update an existing service project.
+ */
+export async function updateProject(
+    projectId,
+    title,
+    description,
+    location,
+    date,
+    organizationId
+) {
+    try {
+        const result = await pool.query(
+            `
+            UPDATE service_project
+            SET
+                title = $1,
+                description = $2,
+                location = $3,
+                date = $4,
+                organization_id = $5
+            WHERE project_id = $6
+            RETURNING project_id
+            `,
+            [
+                title,
+                description,
+                location,
+                date,
+                organizationId,
+                projectId
+            ]
+        )
+
+        if (result.rows.length === 0) {
+            throw new Error(
+                "Failed to update project"
+            )
+        }
+
+        return result.rows[0].project_id
+    } catch (error) {
+        console.error(
+            "Error updating project:",
+            error
+        )
         throw error
     }
 }

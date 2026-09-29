@@ -1,6 +1,10 @@
-import express from "express";
+import express from "express"
 
-import { homePage } from "./controllers/index.js";
+
+import {
+    homePage
+} from "./controllers/index.js"
+
 
 import {
     showOrganizationsPage,
@@ -11,30 +15,37 @@ import {
     processEditOrganizationForm,
     organizationValidation,
     organizationEditValidation
-} from "./controllers/organizations.js";
+} from "./controllers/organizations.js"
+
 
 import {
     showProjectsPage,
     showProjectDetailsPage,
     showNewProjectForm,
     processNewProjectForm,
+    showEditProjectForm,
+    processEditProjectForm,
     projectValidation
-} from "./controllers/projects.js";
+} from "./controllers/projects.js"
+
 
 import {
     categoriesPage,
     categoryDetailsPage,
     showAssignCategoriesForm,
     processAssignCategoriesForm
-} from "./controllers/categories.js";
+} from "./controllers/categories.js"
+
 
 import {
     testError,
     notFound,
     errorHandler
-} from "./controllers/errors.js";
+} from "./controllers/errors.js"
 
-const router = express.Router();
+
+const router = express.Router()
+
 
 // ========================================
 // Home
@@ -43,7 +54,8 @@ const router = express.Router();
 router.get(
     "/",
     homePage
-);
+)
+
 
 // ========================================
 // Organizations
@@ -53,13 +65,14 @@ router.get(
 router.get(
     "/organizations",
     showOrganizationsPage
-);
+)
 
 // Organization details
 router.get(
     "/organization/:id",
     showOrganizationDetailsPage
-);
+)
+
 
 // ========================================
 // New Organization
@@ -69,14 +82,15 @@ router.get(
 router.get(
     "/new-organization",
     showNewOrganizationForm
-);
+)
 
 // Process new organization form
 router.post(
     "/new-organization",
     organizationValidation,
     processNewOrganizationForm
-);
+)
+
 
 // ========================================
 // Edit Organization
@@ -86,14 +100,15 @@ router.post(
 router.get(
     "/edit-organization/:id",
     showEditOrganizationForm
-);
+)
 
 // Process edit organization form
 router.post(
     "/edit-organization/:id",
     organizationEditValidation,
     processEditOrganizationForm
-);
+)
+
 
 // ========================================
 // Projects
@@ -103,26 +118,50 @@ router.post(
 router.get(
     "/projects",
     showProjectsPage
-);
+)
 
 // Project details
 router.get(
     "/project/:id",
     showProjectDetailsPage
-);
+)
+
+
+// ========================================
+// New Project
+// ========================================
 
 // Display new project form
 router.get(
     "/new-project",
     showNewProjectForm
-);
+)
 
 // Process new project form
 router.post(
     "/new-project",
     projectValidation,
     processNewProjectForm
-);
+)
+
+
+// ========================================
+// Edit Project
+// ========================================
+
+// Display edit project form
+router.get(
+    "/edit-project/:id",
+    showEditProjectForm
+)
+
+// Process edit project form
+router.post(
+    "/edit-project/:id",
+    projectValidation,
+    processEditProjectForm
+)
+
 
 // ========================================
 // Categories
@@ -132,13 +171,14 @@ router.post(
 router.get(
     "/categories",
     categoriesPage
-);
+)
 
 // Category details
 router.get(
     "/category/:id",
     categoryDetailsPage
-);
+)
+
 
 // ========================================
 // Assign Categories to Project
@@ -148,13 +188,14 @@ router.get(
 router.get(
     "/assign-categories/:projectId",
     showAssignCategoriesForm
-);
+)
 
 // Process assign categories form
 router.post(
     "/assign-categories/:projectId",
     processAssignCategoriesForm
-);
+)
+
 
 // ========================================
 // Error Testing
@@ -164,16 +205,22 @@ router.post(
 router.get(
     "/test-error",
     testError
-);
+)
+
 
 // ========================================
 // Error Handling
 // ========================================
 
 // 404 handler
-router.use(notFound);
+router.use(
+    notFound
+)
 
 // Global error handler
-router.use(errorHandler);
+router.use(
+    errorHandler
+)
 
-export default router;
+
+export default router
