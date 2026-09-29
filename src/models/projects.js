@@ -120,3 +120,54 @@ export async function getProjectDetails(id) {
         throw error
     }
 }
+
+/**
+ * Create a new service project.
+ */
+export async function createProject(
+    title,
+    description,
+    location,
+    date,
+    organizationId
+) {
+    try {
+        const result = await pool.query(
+            `
+            INSERT INTO service_project
+                (
+                    title,
+                    description,
+                    location,
+                    date,
+                    organization_id
+                )
+            VALUES
+                (
+                    $1,
+                    $2,
+                    $3,
+                    $4,
+                    $5
+                )
+            RETURNING project_id
+            `,
+            [
+                title,
+                description,
+                location,
+                date,
+                organizationId
+            ]
+        )
+
+        if (result.rows.length === 0) {
+            throw new Error("Failed to create project")
+        }
+
+        return result.rows[0].project_id
+    } catch (error) {
+        console.error("Error creating project:", error)
+        throw error
+    }
+}
