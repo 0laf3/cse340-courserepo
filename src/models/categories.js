@@ -16,7 +16,11 @@ export async function getAllCategories() {
 
         return result.rows
     } catch (error) {
-        console.error("Error fetching categories:", error)
+        console.error(
+            "Error fetching categories:",
+            error
+        )
+
         throw error
     }
 }
@@ -44,13 +48,89 @@ export async function getCategoryDetails(id) {
             "Error fetching category details:",
             error
         )
+
         throw error
     }
 }
 
 
 /**
- * Get all service projects that belong to a specific category.
+ * Create a new category.
+ */
+export async function createCategory(name) {
+    try {
+        const result = await pool.query(
+            `
+            INSERT INTO categories
+                (name)
+            VALUES
+                ($1)
+            RETURNING category_id
+            `,
+            [name]
+        )
+
+        if (result.rows.length === 0) {
+            throw new Error(
+                "Failed to create category"
+            )
+        }
+
+        return result.rows[0].category_id
+    } catch (error) {
+        console.error(
+            "Error creating category:",
+            error
+        )
+
+        throw error
+    }
+}
+
+
+/**
+ * Update an existing category.
+ */
+export async function updateCategory(
+    categoryId,
+    name
+) {
+    try {
+        const result = await pool.query(
+            `
+            UPDATE categories
+            SET
+                name = $1
+            WHERE category_id = $2
+            RETURNING category_id
+            `,
+            [
+                name,
+                categoryId
+            ]
+        )
+
+        if (result.rows.length === 0) {
+            throw new Error(
+                "Category not found"
+            )
+        }
+
+        return result.rows[0].category_id
+    } catch (error) {
+        console.error(
+            "Error updating category:",
+            error
+        )
+
+        throw error
+    }
+}
+
+
+/**
+ * Get all service projects that belong
+ * to a specific category.
  */
 export async function getProjectsByCategoryId(id) {
     try {
@@ -83,15 +163,19 @@ export async function getProjectsByCategoryId(id) {
             "Error fetching projects by category:",
             error
         )
+
         throw error
     }
 }
 
 
 /**
- * Get all categories assigned to a specific service project.
+ * Get all categories assigned
+ * to a specific service project.
  */
-export async function getCategoriesByServiceProjectId(projectId) {
+export async function getCategoriesByServiceProjectId(
+    projectId
+) {
     try {
         const result = await pool.query(
             `
@@ -113,6 +197,7 @@ export async function getCategoriesByServiceProjectId(projectId) {
             "Error fetching categories for project:",
             error
         )
+
         throw error
     }
 }
@@ -121,8 +206,9 @@ export async function getCategoriesByServiceProjectId(projectId) {
 /**
  * Assign one category to one service project.
  *
- * This function is intentionally not exported because
- * it is only used by updateCategoryAssignments().
+ * This function is intentionally not exported
+ * because it is only used by
+ * updateCategoryAssignments().
  */
 async function assignCategoryToProject(
     projectId,
@@ -136,7 +222,10 @@ async function assignCategoryToProject(
             VALUES
                 ($1, $2)
             `,
-            [projectId, categoryId]
+            [
+                projectId,
+                categoryId
+            ]
         )
 
         return result
@@ -145,13 +234,15 @@ async function assignCategoryToProject(
             "Error assigning category to project:",
             error
         )
+
         throw error
     }
 }
 
 
 /**
- * Replace all category assignments for a service project.
+ * Replace all category assignments
+ * for a service project.
  */
 export async function updateCategoryAssignments(
     projectId,
@@ -179,6 +270,7 @@ export async function updateCategoryAssignments(
             "Error updating category assignments:",
             error
         )
+
         throw error
     }
 }

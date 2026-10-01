@@ -7,23 +7,45 @@
         Browse service projects by category.
     </p>
 
+    <p>
+        <a href="/new-category">
+            Add New Category
+        </a>
+    </p>
+
     <% if (categories.length > 0) { %>
 
         <ul>
+
             <% categories.forEach(category => { %>
 
                 <li>
-                    <a href="/category/<%= category.category_id %>">
+
+                    <a
+                        href="/category/<%= category.category_id %>"
+                    >
                         <%= category.name %>
                     </a>
+
+                    |
+
+                    <a
+                        href="/edit-category/<%= category.category_id %>"
+                    >
+                        Edit
+                    </a>
+
                 </li>
 
             <% }) %>
+
         </ul>
 
     <% } else { %>
 
-        <p>No categories are available at this time.</p>
+        <p>
+            No categories are available at this time.
+        </p>
 
     <% } %>
 </main>
