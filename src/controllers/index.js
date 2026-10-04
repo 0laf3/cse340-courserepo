@@ -2,7 +2,7 @@
  * Display the home page.
  */
 export const homePage = async (req, res) => {
-    const title = 'Home';
+    const title = "Home"
 
-    res.render('home', { title });
-};
+    res.render("home", { title })
+}

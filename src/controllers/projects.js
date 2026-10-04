@@ -3,7 +3,6 @@ import {
     validationResult
 } from "express-validator"
 
-
 import {
     getUpcomingProjects,
     getProjectDetails,
@@ -11,14 +10,11 @@ import {
     updateProject
 } from "../models/projects.js"
 
-
 import {
     getAllOrganizations
 } from "../models/organizations.js"
 
-
 const NUMBER_OF_UPCOMING_PROJECTS = 5
-
 
 /**
  * Validation rules for creating and editing projects.
@@ -75,11 +71,13 @@ export const projectValidation = [
         )
 ]
 
-
 /**
  * Display upcoming service projects.
  */
-export async function showProjectsPage(req, res) {
+export const showProjectsPage = async (
+    req,
+    res
+) => {
     try {
         const projects =
             await getUpcomingProjects(
@@ -102,14 +100,13 @@ export async function showProjectsPage(req, res) {
     }
 }
 
-
 /**
  * Display the details of one service project.
  */
-export async function showProjectDetailsPage(
+export const showProjectDetailsPage = async (
     req,
     res
-) {
+) => {
     try {
         const id = req.params.id
 
@@ -138,15 +135,14 @@ export async function showProjectDetailsPage(
     }
 }
 
-
 /**
  * Display the New Project form.
  */
-export async function showNewProjectForm(
+export const showNewProjectForm = async (
     req,
     res,
     next
-) {
+) => {
     try {
         const organizations =
             await getAllOrganizations()
@@ -165,23 +161,24 @@ export async function showNewProjectForm(
     }
 }
 
-
 /**
  * Process the New Project form.
  */
-export async function processNewProjectForm(
+export const processNewProjectForm = async (
     req,
     res
-) {
+) => {
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
-        errors.array().forEach((error) => {
-            req.flash(
-                "error",
-                error.msg
-            )
-        })
+        errors.array().forEach(
+            (error) => {
+                req.flash(
+                    "error",
+                    error.msg
+                )
+            }
+        )
 
         return res.redirect(
             "/new-project"
@@ -231,20 +228,19 @@ export async function processNewProjectForm(
     }
 }
 
-
 /**
  * Display the Edit Project form.
  */
-export async function showEditProjectForm(
+export const showEditProjectForm = async (
     req,
     res,
     next
-) {
+) => {
     try {
         const projectId =
             req.params.id
 
-        /*
+        /**
          * Get the existing project.
          */
         const project =
@@ -252,7 +248,7 @@ export async function showEditProjectForm(
                 projectId
             )
 
-        /*
+        /**
          * Check whether the project exists.
          */
         if (!project) {
@@ -264,14 +260,14 @@ export async function showEditProjectForm(
             )
         }
 
-        /*
+        /**
          * Get all organizations for
          * the organization dropdown.
          */
         const organizations =
             await getAllOrganizations()
 
-        /*
+        /**
          * Render the edit form.
          */
         res.render(
@@ -292,26 +288,27 @@ export async function showEditProjectForm(
     }
 }
 
-
 /**
  * Process the Edit Project form.
  */
-export async function processEditProjectForm(
+export const processEditProjectForm = async (
     req,
     res
-) {
+) => {
     const errors = validationResult(req)
 
-    /*
+    /**
      * Check validation errors.
      */
     if (!errors.isEmpty()) {
-        errors.array().forEach((error) => {
-            req.flash(
-                "error",
-                error.msg
-            )
-        })
+        errors.array().forEach(
+            (error) => {
+                req.flash(
+                    "error",
+                    error.msg
+                )
+            }
+        )
 
         return res.redirect(
             `/edit-project/${req.params.id}`
@@ -330,7 +327,7 @@ export async function processEditProjectForm(
     } = req.body
 
     try {
-        /*
+        /**
          * Update the project in the database.
          */
         const updatedProjectId =
@@ -343,7 +340,7 @@ export async function processEditProjectForm(
                 organizationId
             )
 
-        /*
+        /**
          * Show success message.
          */
         req.flash(
@@ -351,7 +348,7 @@ export async function processEditProjectForm(
             "Service project updated successfully!"
         )
 
-        /*
+        /**
          * Redirect to the project details page.
          */
         return res.redirect(

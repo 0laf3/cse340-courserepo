@@ -1,10 +1,9 @@
 import pool from "./db.js"
 
-
 /**
  * Get all organizations.
  */
-export async function getAllOrganizations() {
+export const getAllOrganizations = async () => {
     try {
         const result = await pool.query(
             `
@@ -29,11 +28,10 @@ export async function getAllOrganizations() {
     }
 }
 
-
 /**
  * Get the details of one organization.
  */
-export async function getOrganizationDetails(id) {
+export const getOrganizationDetails = async (id) => {
     try {
         const result = await pool.query(
             `
@@ -63,16 +61,15 @@ export async function getOrganizationDetails(id) {
     }
 }
 
-
 /**
  * Create a new organization.
  */
-export async function createOrganization(
+export const createOrganization = async (
     name,
     description,
     contactEmail,
     logoFilename
-) {
+) => {
     try {
         const result = await pool.query(
             `
@@ -116,17 +113,16 @@ export async function createOrganization(
     }
 }
 
-
 /**
  * Update an existing organization.
  */
-export async function updateOrganization(
+export const updateOrganization = async (
     organizationId,
     name,
     description,
     contactEmail,
     logoFilename
-) {
+) => {
     try {
         const result = await pool.query(
             `
@@ -164,18 +160,17 @@ export async function updateOrganization(
     }
 }
 
-
 /**
  * Delete an organization.
  *
  * The organization can only be deleted if
  * it does not have any service projects.
  */
-export async function deleteOrganization(
+export const deleteOrganization = async (
     organizationId
-) {
+) => {
     try {
-        /*
+        /**
          * Check whether the organization has
          * any service projects.
          */
@@ -194,7 +189,7 @@ export async function deleteOrganization(
                 projectResult.rows[0].project_count
             )
 
-        /*
+        /**
          * Do not delete an organization that
          * still has projects.
          */
@@ -204,7 +199,7 @@ export async function deleteOrganization(
             )
         }
 
-        /*
+        /**
          * Delete the organization.
          */
         const result = await pool.query(
@@ -216,7 +211,7 @@ export async function deleteOrganization(
             [organizationId]
         )
 
-        /*
+        /**
          * Make sure an organization was actually deleted.
          */
         if (result.rows.length === 0) {

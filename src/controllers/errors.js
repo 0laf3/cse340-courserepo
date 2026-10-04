@@ -1,10 +1,9 @@
-/**
- * Generate a test 500 error.
- */
+ /**
+  * Generate a test 500 error.
+  */
 export const testError = (req, res, next) => {
     const err = new Error("This is a test error")
     err.status = 500
-
     next(err)
 }
 
@@ -20,7 +19,6 @@ export const notFound = (req, res, next) => {
 
     const err = new Error("Page Not Found")
     err.status = 404
-
     next(err)
 }
 
@@ -46,5 +44,8 @@ export const errorHandler = (err, req, res, next) => {
     }
 
     // Render the appropriate error template.
-    res.status(status).render(`errors/${template}`, context)
+    res.status(status).render(
+        `errors/${template}`,
+        context
+    )
 }

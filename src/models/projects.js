@@ -1,10 +1,11 @@
 import pool from "./db.js"
 
-
 /**
  * Get all service projects for a specific organization.
  */
-export async function getProjectsByOrganizationId(organization_id) {
+export const getProjectsByOrganizationId = async (
+    organization_id
+) => {
     try {
         const result = await pool.query(
             `
@@ -35,13 +36,14 @@ export async function getProjectsByOrganizationId(organization_id) {
     }
 }
 
-
 /**
  * Get the next upcoming service projects.
  *
  * The number of projects is controlled by the controller.
  */
-export async function getUpcomingProjects(number_of_projects) {
+export const getUpcomingProjects = async (
+    number_of_projects
+) => {
     try {
         const result = await pool.query(
             `
@@ -73,12 +75,13 @@ export async function getUpcomingProjects(number_of_projects) {
     }
 }
 
-
 /**
  * Get the details of one service project,
  * including its organization and categories.
  */
-export async function getProjectDetails(id) {
+export const getProjectDetails = async (
+    id
+) => {
     try {
         const projectResult = await pool.query(
             `
@@ -86,8 +89,8 @@ export async function getProjectDetails(id) {
                 sp.project_id,
                 sp.title,
                 sp.description,
-                sp.date,
                 sp.location,
+                sp.date,
                 sp.organization_id,
                 o.name AS organization_name
             FROM service_project AS sp
@@ -104,7 +107,7 @@ export async function getProjectDetails(id) {
 
         const project = projectResult.rows[0]
 
-        /*
+        /**
          * Get all categories assigned to this project.
          */
         const categoryResult = await pool.query(
@@ -133,17 +136,16 @@ export async function getProjectDetails(id) {
     }
 }
 
-
 /**
  * Create a new service project.
  */
-export async function createProject(
+export const createProject = async (
     title,
     description,
     location,
     date,
     organizationId
-) {
+) => {
     try {
         const result = await pool.query(
             `
@@ -190,18 +192,17 @@ export async function createProject(
     }
 }
 
-
 /**
  * Update an existing service project.
  */
-export async function updateProject(
+export const updateProject = async (
     projectId,
     title,
     description,
     location,
     date,
     organizationId
-) {
+) => {
     try {
         const result = await pool.query(
             `
@@ -239,4 +240,4 @@ export async function updateProject(
         )
         throw error
     }
-};
+}

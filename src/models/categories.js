@@ -1,10 +1,9 @@
 import pool from "./db.js"
 
-
 /**
  * Get all categories.
  */
-export async function getAllCategories() {
+export const getAllCategories = async () => {
     try {
         const result = await pool.query(`
             SELECT
@@ -20,16 +19,14 @@ export async function getAllCategories() {
             "Error fetching categories:",
             error
         )
-
         throw error
     }
 }
 
-
 /**
  * Get the details of one category.
  */
-export async function getCategoryDetails(id) {
+export const getCategoryDetails = async (id) => {
     try {
         const result = await pool.query(
             `
@@ -48,16 +45,14 @@ export async function getCategoryDetails(id) {
             "Error fetching category details:",
             error
         )
-
         throw error
     }
 }
 
-
 /**
  * Create a new category.
  */
-export async function createCategory(name) {
+export const createCategory = async (name) => {
     try {
         const result = await pool.query(
             `
@@ -82,19 +77,17 @@ export async function createCategory(name) {
             "Error creating category:",
             error
         )
-
         throw error
     }
 }
 
-
 /**
  * Update an existing category.
  */
-export async function updateCategory(
+export const updateCategory = async (
     categoryId,
     name
-) {
+) => {
     try {
         const result = await pool.query(
             `
@@ -122,17 +115,17 @@ export async function updateCategory(
             "Error updating category:",
             error
         )
-
         throw error
     }
 }
-
 
 /**
  * Get all service projects that belong
  * to a specific category.
  */
-export async function getProjectsByCategoryId(id) {
+export const getProjectsByCategoryId = async (
+    id
+) => {
     try {
         const result = await pool.query(
             `
@@ -163,45 +156,40 @@ export async function getProjectsByCategoryId(id) {
             "Error fetching projects by category:",
             error
         )
-
         throw error
     }
 }
-
 
 /**
  * Get all categories assigned
  * to a specific service project.
  */
-export async function getCategoriesByServiceProjectId(
-    projectId
-) {
-    try {
-        const result = await pool.query(
-            `
-            SELECT
-                c.category_id,
-                c.name
-            FROM categories AS c
-            JOIN project_categories AS pc
-                ON c.category_id = pc.category_id
-            WHERE pc.project_id = $1
-            ORDER BY c.name ASC
-            `,
-            [projectId]
-        )
+export const getCategoriesByServiceProjectId =
+    async (projectId) => {
+        try {
+            const result = await pool.query(
+                `
+                SELECT
+                    c.category_id,
+                    c.name
+                FROM categories AS c
+                JOIN project_categories AS pc
+                    ON c.category_id = pc.category_id
+                WHERE pc.project_id = $1
+                ORDER BY c.name ASC
+                `,
+                [projectId]
+            )
 
-        return result.rows
-    } catch (error) {
-        console.error(
-            "Error fetching categories for project:",
-            error
-        )
-
-        throw error
+            return result.rows
+        } catch (error) {
+            console.error(
+                "Error fetching categories for project:",
+                error
+            )
+            throw error
+        }
     }
-}
-
 
 /**
  * Assign one category to one service project.
@@ -210,10 +198,10 @@ export async function getCategoriesByServiceProjectId(
  * because it is only used by
  * updateCategoryAssignments().
  */
-async function assignCategoryToProject(
+const assignCategoryToProject = async (
     projectId,
     categoryId
-) {
+) => {
     try {
         const result = await pool.query(
             `
@@ -234,20 +222,18 @@ async function assignCategoryToProject(
             "Error assigning category to project:",
             error
         )
-
         throw error
     }
 }
-
 
 /**
  * Replace all category assignments
  * for a service project.
  */
-export async function updateCategoryAssignments(
+export const updateCategoryAssignments = async (
     projectId,
     categoryIds
-) {
+) => {
     try {
         // Delete existing category assignments.
         await pool.query(
@@ -270,7 +256,6 @@ export async function updateCategoryAssignments(
             "Error updating category assignments:",
             error
         )
-
         throw error
     }
 }

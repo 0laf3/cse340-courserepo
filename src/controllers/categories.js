@@ -3,7 +3,6 @@ import {
     validationResult
 } from "express-validator"
 
-
 import {
     getAllCategories,
     getCategoryDetails,
@@ -14,18 +13,15 @@ import {
     updateCategoryAssignments
 } from "../models/categories.js"
 
-
 import {
     getProjectDetails
 } from "../models/projects.js"
-
 
 // ========================================
 // Category Validation
 // ========================================
 
 export const categoryValidation = [
-
     body("name")
         .trim()
         .escape()
@@ -42,7 +38,6 @@ export const categoryValidation = [
         )
 ]
 
-
 // ========================================
 // Display Categories
 // ========================================
@@ -50,10 +45,10 @@ export const categoryValidation = [
 /**
  * Display all categories.
  */
-export async function categoriesPage(
+export const categoriesPage = async (
     req,
     res
-) {
+) => {
     try {
         const categories =
             await getAllCategories()
@@ -82,16 +77,15 @@ export async function categoriesPage(
     }
 }
 
-
 /**
  * Display the details of one category
  * and all service projects associated
  * with it.
  */
-export async function categoryDetailsPage(
+export const categoryDetailsPage = async (
     req,
     res
-) {
+) => {
     try {
         const id =
             req.params.id
@@ -139,7 +133,6 @@ export async function categoryDetailsPage(
     }
 }
 
-
 // ========================================
 // Create Category
 // ========================================
@@ -148,10 +141,10 @@ export async function categoryDetailsPage(
  * Display the form for creating
  * a new category.
  */
-export function showNewCategoryForm(
+export const showNewCategoryForm = (
     req,
     res
-) {
+) => {
     res.render(
         "new-category",
         {
@@ -161,19 +154,17 @@ export function showNewCategoryForm(
     )
 }
 
-
 /**
  * Process the create category form.
  */
-export async function processNewCategoryForm(
+export const processNewCategoryForm = async (
     req,
     res
-) {
+) => {
     const errors =
         validationResult(req)
 
     if (!errors.isEmpty()) {
-
         errors.array().forEach(
             (error) => {
                 req.flash(
@@ -193,7 +184,6 @@ export async function processNewCategoryForm(
     } = req.body
 
     try {
-
         const categoryId =
             await createCategory(
                 name
@@ -207,9 +197,7 @@ export async function processNewCategoryForm(
         return res.redirect(
             `/category/${categoryId}`
         )
-
     } catch (error) {
-
         console.error(
             "Error creating category:",
             error
@@ -226,7 +214,6 @@ export async function processNewCategoryForm(
     }
 }
 
-
 // ========================================
 // Edit Category
 // ========================================
@@ -234,12 +221,11 @@ export async function processNewCategoryForm(
 /**
  * Display the edit category form.
  */
-export async function showEditCategoryForm(
+export const showEditCategoryForm = async (
     req,
     res
-) {
+) => {
     try {
-
         const categoryId =
             req.params.id
 
@@ -249,7 +235,6 @@ export async function showEditCategoryForm(
             )
 
         if (!category) {
-
             return res
                 .status(404)
                 .render(
@@ -269,9 +254,7 @@ export async function showEditCategoryForm(
                 category
             }
         )
-
     } catch (error) {
-
         console.error(
             "Error loading edit category form:",
             error
@@ -287,19 +270,17 @@ export async function showEditCategoryForm(
     }
 }
 
-
 /**
  * Process the edit category form.
  */
-export async function processEditCategoryForm(
+export const processEditCategoryForm = async (
     req,
     res
-) {
+) => {
     const errors =
         validationResult(req)
 
     if (!errors.isEmpty()) {
-
         errors.array().forEach(
             (error) => {
                 req.flash(
@@ -322,7 +303,6 @@ export async function processEditCategoryForm(
     } = req.body
 
     try {
-
         const updatedCategoryId =
             await updateCategory(
                 categoryId,
@@ -337,9 +317,7 @@ export async function processEditCategoryForm(
         return res.redirect(
             `/category/${updatedCategoryId}`
         )
-
     } catch (error) {
-
         console.error(
             "Error updating category:",
             error
@@ -356,7 +334,6 @@ export async function processEditCategoryForm(
     }
 }
 
-
 // ========================================
 // Assign Categories to Project
 // ========================================
@@ -365,13 +342,12 @@ export async function processEditCategoryForm(
  * Display the form for assigning
  * categories to a project.
  */
-export async function showAssignCategoriesForm(
+export const showAssignCategoriesForm = async (
     req,
     res,
     next
-) {
+) => {
     try {
-
         const projectId =
             req.params.projectId
 
@@ -381,7 +357,6 @@ export async function showAssignCategoriesForm(
             )
 
         if (!projectDetails) {
-
             return res
                 .status(404)
                 .render(
@@ -414,9 +389,7 @@ export async function showAssignCategoriesForm(
                 assignedCategories
             }
         )
-
     } catch (error) {
-
         console.error(
             "Error displaying assign categories form:",
             error
@@ -426,16 +399,14 @@ export async function showAssignCategoriesForm(
     }
 }
 
-
 /**
  * Process the category assignment form.
  */
-export async function processAssignCategoriesForm(
+export const processAssignCategoriesForm = async (
     req,
     res
-) {
+) => {
     try {
-
         const projectId =
             req.params.projectId
 
@@ -467,9 +438,7 @@ export async function processAssignCategoriesForm(
         return res.redirect(
             `/project/${projectId}`
         )
-
     } catch (error) {
-
         console.error(
             "Error updating project categories:",
             error

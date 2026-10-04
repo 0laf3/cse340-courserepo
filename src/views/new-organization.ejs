@@ -24,6 +24,7 @@
                 id="name"
                 name="name"
                 required
+                minlength="3"
                 maxlength="150"
                 placeholder="Enter organization name"
             >
@@ -70,6 +71,32 @@
                 required
                 placeholder="example@email.com"
             >
+
+        </div>
+
+
+        <!-- ==================================
+             Organization Logo
+             ================================== -->
+
+        <div class="form-group">
+
+            <label for="logoFilename">
+                Logo Filename
+            </label>
+
+            <input
+                type="text"
+                id="logoFilename"
+                name="logoFilename"
+                value="placeholder-logo.png"
+                required
+                maxlength="255"
+            >
+
+            <small>
+                Default logo: placeholder-logo.png
+            </small>
 
         </div>
 

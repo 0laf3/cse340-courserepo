@@ -110,10 +110,10 @@ export const organizationEditValidation = [
 /**
  * Display all organizations.
  */
-export async function showOrganizationsPage(
+export const showOrganizationsPage = async (
     req,
     res
-) {
+) => {
     try {
         const organizations =
             await getAllOrganizations()
@@ -143,10 +143,10 @@ export async function showOrganizationsPage(
 /**
  * Display the details of one organization.
  */
-export async function showOrganizationDetailsPage(
+export const showOrganizationDetailsPage = async (
     req,
     res
-) {
+) => {
     try {
         const id = req.params.id
 
@@ -162,7 +162,7 @@ export async function showOrganizationDetailsPage(
             )
         }
 
-        /*
+        /**
          * Start with an empty array so the
          * projects variable always exists.
          */
@@ -172,7 +172,7 @@ export async function showOrganizationDetailsPage(
             projects =
                 await getProjectsByOrganizationId(id)
 
-            /*
+            /**
              * Make sure projects is always an array.
              */
             if (!Array.isArray(projects)) {
@@ -213,10 +213,10 @@ export async function showOrganizationDetailsPage(
 /**
  * Display the New Organization form.
  */
-export function showNewOrganizationForm(
+export const showNewOrganizationForm = (
     req,
     res
-) {
+) => {
     res.render(
         "new-organization",
         {
@@ -228,10 +228,10 @@ export function showNewOrganizationForm(
 /**
  * Process the New Organization form.
  */
-export async function processNewOrganizationForm(
+export const processNewOrganizationForm = async (
     req,
     res
-) {
+) => {
     const errors =
         validationResult(req)
 
@@ -294,10 +294,10 @@ export async function processNewOrganizationForm(
 /**
  * Display the Edit Organization form.
  */
-export async function showEditOrganizationForm(
+export const showEditOrganizationForm = async (
     req,
     res
-) {
+) => {
     try {
         const organizationId =
             req.params.id
@@ -341,10 +341,10 @@ export async function showEditOrganizationForm(
 /**
  * Process the Edit Organization form.
  */
-export async function processEditOrganizationForm(
+export const processEditOrganizationForm = async (
     req,
     res
-) {
+) => {
     const errors =
         validationResult(req)
 
@@ -411,10 +411,10 @@ export async function processEditOrganizationForm(
 /**
  * Process deleting an organization.
  */
-export async function processDeleteOrganization(
+export const processDeleteOrganization = async (
     req,
     res
-) {
+) => {
     const organizationId =
         req.params.id
 
@@ -437,7 +437,7 @@ export async function processDeleteOrganization(
             error
         )
 
-        /*
+        /**
          * If the organization has projects,
          * explain why it cannot be deleted.
          */
