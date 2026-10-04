@@ -239,4 +239,4 @@ export async function updateProject(
         )
         throw error
     }
-}
+};

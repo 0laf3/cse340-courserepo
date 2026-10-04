@@ -69,32 +69,6 @@
 
                     <% } %>
 
-
-                    <p>
-
-                        <a
-                            href="/edit-organization/<%= organization.organization_id %>"
-                        >
-                            Edit Organization
-                        </a>
-
-                    </p>
-
-
-                    <!-- Delete Organization -->
-
-                    <form
-                        action="/delete-organization/<%= organization.organization_id %>"
-                        method="POST"
-                        onsubmit="return confirm('Are you sure you want to delete this organization?');"
-                    >
-
-                        <button type="submit">
-                            Delete Organization
-                        </button>
-
-                    </form>
-
                 </article>
 
                 <hr>

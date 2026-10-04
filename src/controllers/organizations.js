@@ -3,7 +3,6 @@ import {
     validationResult
 } from "express-validator"
 
-
 import {
     getAllOrganizations,
     getOrganizationDetails,
@@ -12,12 +11,14 @@ import {
     deleteOrganization
 } from "../models/organizations.js"
 
+import {
+    getProjectsByOrganizationId
+} from "../models/projects.js"
 
 /**
  * Validation rules for creating an organization.
  */
 export const organizationValidation = [
-
     body("name")
         .trim()
         .escape()
@@ -59,13 +60,11 @@ export const organizationValidation = [
             "Please provide a valid email address"
         )
 ]
-
 
 /**
  * Validation rules for editing an organization.
  */
 export const organizationEditValidation = [
-
     body("name")
         .trim()
         .escape()
@@ -107,7 +106,6 @@ export const organizationEditValidation = [
             "Please provide a valid email address"
         )
 ]
-
 
 /**
  * Display all organizations.
@@ -142,7 +140,6 @@ export async function showOrganizationsPage(
     }
 }
 
-
 /**
  * Display the details of one organization.
  */
@@ -165,11 +162,37 @@ export async function showOrganizationDetailsPage(
             )
         }
 
+        /*
+         * Start with an empty array so the
+         * projects variable always exists.
+         */
+        let projects = []
+
+        try {
+            projects =
+                await getProjectsByOrganizationId(id)
+
+            /*
+             * Make sure projects is always an array.
+             */
+            if (!Array.isArray(projects)) {
+                projects = []
+            }
+        } catch (projectError) {
+            console.error(
+                "Error loading organization projects:",
+                projectError
+            )
+
+            projects = []
+        }
+
         res.render(
             "organization",
             {
                 title: organization.name,
-                organization
+                organization,
+                projects
             }
         )
     } catch (error) {
@@ -187,7 +210,6 @@ export async function showOrganizationDetailsPage(
     }
 }
 
-
 /**
  * Display the New Organization form.
  */
@@ -203,7 +225,6 @@ export function showNewOrganizationForm(
     )
 }
 
-
 /**
  * Process the New Organization form.
  */
@@ -215,7 +236,6 @@ export async function processNewOrganizationForm(
         validationResult(req)
 
     if (!errors.isEmpty()) {
-
         errors.array().forEach(
             (error) => {
                 req.flash(
@@ -238,7 +258,6 @@ export async function processNewOrganizationForm(
     } = req.body
 
     try {
-
         const organizationId =
             await createOrganization(
                 name,
@@ -255,9 +274,7 @@ export async function processNewOrganizationForm(
         return res.redirect(
             `/organization/${organizationId}`
         )
-
     } catch (error) {
-
         console.error(
             "Error creating organization:",
             error
@@ -274,7 +291,6 @@ export async function processNewOrganizationForm(
     }
 }
 
-
 /**
  * Display the Edit Organization form.
  */
@@ -283,7 +299,6 @@ export async function showEditOrganizationForm(
     res
 ) {
     try {
-
         const organizationId =
             req.params.id
 
@@ -308,9 +323,7 @@ export async function showEditOrganizationForm(
                 organization
             }
         )
-
     } catch (error) {
-
         console.error(
             "Error loading edit organization form:",
             error
@@ -325,7 +338,6 @@ export async function showEditOrganizationForm(
     }
 }
 
-
 /**
  * Process the Edit Organization form.
  */
@@ -337,7 +349,6 @@ export async function processEditOrganizationForm(
         validationResult(req)
 
     if (!errors.isEmpty()) {
-
         errors.array().forEach(
             (error) => {
                 req.flash(
@@ -363,7 +374,6 @@ export async function processEditOrganizationForm(
     } = req.body
 
     try {
-
         const updatedOrganizationId =
             await updateOrganization(
                 organizationId,
@@ -381,9 +391,7 @@ export async function processEditOrganizationForm(
         return res.redirect(
             `/organization/${updatedOrganizationId}`
         )
-
     } catch (error) {
-
         console.error(
             "Error updating organization:",
             error
@@ -400,7 +408,6 @@ export async function processEditOrganizationForm(
     }
 }
 
-
 /**
  * Process deleting an organization.
  */
@@ -412,7 +419,6 @@ export async function processDeleteOrganization(
         req.params.id
 
     try {
-
         await deleteOrganization(
             organizationId
         )
@@ -425,9 +431,7 @@ export async function processDeleteOrganization(
         return res.redirect(
             "/organizations"
         )
-
     } catch (error) {
-
         console.error(
             "Error deleting organization:",
             error
