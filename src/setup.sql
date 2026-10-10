@@ -376,37 +376,56 @@ WHERE conrelid = 'public.users'::regclass
 -- RUN THIS SECTION SEPARATELY WHEN NEEDED
 -- ========================================
 
--- Insert a temporary test user:
---
--- INSERT INTO users (
---     name,
---     email,
---     password_hash,
---     role_id
--- )
--- SELECT
---     'testuser',
---     'test@example.com',
---     'placeholder_hash',
---     role_id
--- FROM roles
--- WHERE role_name = 'user';
+ --Insert a temporary test user:
+
+ INSERT INTO users (
+     name,
+     email,
+     password_hash,
+     role_id
+ )
+ SELECT
+     'testuser',
+     'test@example.com',
+     'placeholder_hash',
+     role_id
+ FROM roles
+ WHERE role_name = 'user';
 --
 -- Verify the relationship:
---
--- SELECT
---     u.user_id,
---     u.name,
---     u.email,
---     r.role_name,
---     r.role_description,
---     u.created_at
--- FROM users AS u
--- JOIN roles AS r
---     ON u.role_id = r.role_id
--- WHERE u.email = 'test@example.com';
---
--- Delete the temporary test user:
---
--- DELETE FROM users
--- WHERE email = 'test@example.com';
+
+ SELECT
+     u.user_id,
+     u.name,
+     u.email,
+     r.role_name,
+     r.role_description,
+     u.created_at
+ FROM users AS u
+ JOIN roles AS r
+     ON u.role_id = r.role_id
+ WHERE u.email = 'test@example.com';
+
+ Delete the temporary test user:
+
+ DELETE FROM users
+ WHERE email = 'test@example.com';
+
+ SELECT * FROM users;
+ SELECT * FROM roles;
+ UPDATE users
+	SET role_id = (
+    SELECT role_id
+    FROM roles
+    WHERE role_name = 'admin'
+)
+WHERE email = 'admin@example.com';
+
+SELECT
+    u.user_id,
+    u.name,
+    u.email,
+    r.role_name
+FROM users AS u
+JOIN roles AS r ON u.role_id = r.role_id
+WHERE u.email = 'admin@example.com';
