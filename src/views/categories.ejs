@@ -1,44 +1,31 @@
+
 <%- include("partials/header") %>
 
 <main>
     <h1><%= title %></h1>
 
-    <p>
-        Browse service projects by category.
-    </p>
+    <p>Browse service projects by category.</p>
 
-    <p>
-        <a href="/new-category">
-            Add New Category
-        </a>
-    </p>
+    <% if (user && user.role_name === "admin") { %>
+        <p>
+            <a href="/new-category">
+                Add New Category
+            </a>
+        </p>
+    <% } %>
 
-    <% if (categories.length > 0) { %>
-
+    <% if (categories && categories.length > 0) { %>
         <ul>
-
             <% categories.forEach(category => { %>
-
                 <li>
-
-                    <a
-                        href="/category/<%= category.category_id %>"
-                    >
+                    <a href="/category/<%= category.category_id %>">
                         <%= category.name %>
                     </a>
-
                 </li>
-
             <% }) %>
-
         </ul>
-
     <% } else { %>
-
-        <p>
-            No categories are available at this time.
-        </p>
-
+        <p>No categories are available at this time.</p>
     <% } %>
 </main>
 

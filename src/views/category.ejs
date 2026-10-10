@@ -1,38 +1,33 @@
+
 <%- include("partials/header") %>
 
 <main>
     <h1><%= category.name %></h1>
 
-  <p>
-                       
-                    <a
-                        href="/edit-category/<%= category.category_id %>"
-                    >
-                        Edit Category
-                    </a>
+    <% if (user && user.role_name === "admin") { %>
+        <p>
+            <a href="/edit-category/<%= category.category_id %>">
+                Edit Category
+            </a>
+        </p>
+    <% } %>
 
     <h2>Service Projects</h2>
 
-    <% if (projects.length > 0) { %>
-
+    <% if (projects && projects.length > 0) { %>
         <ul>
             <% projects.forEach(project => { %>
-
                 <li>
                     <a href="/project/<%= project.project_id %>">
                         <%= project.title %>
                     </a>
                 </li>
-
             <% }) %>
         </ul>
-
     <% } else { %>
-
         <p>
             There are currently no service projects in this category.
         </p>
-
     <% } %>
 </main>
 

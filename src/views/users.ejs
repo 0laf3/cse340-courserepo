@@ -1,0 +1,50 @@
+<%- include('partials/header') %>
+
+<main class="container">
+    <h1><%= title %></h1>
+
+    <p>
+        View registered users, their email addresses,
+        and their assigned roles.
+    </p>
+
+    <% if (users && users.length > 0) { %>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email (Username)</th>
+                        <th scope="col">Role</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% users.forEach((registeredUser) => { %>
+                        <tr>
+                            <td>
+                                <%= registeredUser.name %>
+                            </td>
+
+                            <td>
+                                <%= registeredUser.email %>
+                            </td>
+
+                            <td>
+                                <%= registeredUser.role_name %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <p>No registered users were found.</p>
+    <% } %>
+
+    <p>
+        <a href="/dashboard">Return to Dashboard</a>
+    </p>
+</main>
+
+<%- include('partials/footer') %>

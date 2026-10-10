@@ -1,90 +1,53 @@
+
 <%- include("partials/header") %>
 
 <main>
+    <h1><%= title %></h1>
 
-    <h1>
-        <%= title %>
-    </h1>
+    <% if (user && user.role_name === "admin") { %>
+        <p>
+            <a href="/new-organization">
+                Add New Organization
+            </a>
+        </p>
+    <% } %>
 
-
-    <p>
-        <a href="/new-organization">
-            Add New Organization
-        </a>
-    </p>
-
-
-    <% if (
-        organizations &&
-        organizations.length > 0
-    ) { %>
-
+    <% if (organizations && organizations.length > 0) { %>
         <section>
-
-            <% organizations.forEach(
-                organization => {
-            %>
-
+            <% organizations.forEach(organization => { %>
                 <article>
-
                     <h2>
-                         <img
-                             src="/images/<%= organization.logo_filename %>"
-                             alt="<%= organization.name %> logo" >
-                        <a
-                            href="/organization/<%= organization.organization_id %>"
+                        <img
+                            src="/images/<%= organization.logo_filename %>"
+                            alt="<%= organization.name %> logo"
                         >
+
+                        <a href="/organization/<%= organization.organization_id %>">
                             <%= organization.name %>
                         </a>
-                        
                     </h2>
 
-
-                    <% if (
-                        organization.description
-                    ) { %>
-
+                    <% if (organization.description) { %>
                         <p>
-                            <strong>
-                                Description:
-                            </strong>
-
+                            <strong>Description:</strong>
                             <%= organization.description %>
                         </p>
-
                     <% } %>
 
-
-                    <% if (
-                        organization.contact_email
-                    ) { %>
-
+                    <% if (organization.contact_email) { %>
                         <p>
-                            <strong>
-                                Contact Email:
-                            </strong>
-
+                            <strong>Contact Email:</strong>
                             <%= organization.contact_email %>
                         </p>
-
                     <% } %>
-
                 </article>
 
                 <hr>
-
             <% }) %>
-
         </section>
-
     <% } else { %>
-
-        <p>
-            No organizations have been added yet.
-        </p>
-
+        <p>No organizations have been added yet.</p>
     <% } %>
-
 </main>
 
 <%- include("partials/footer") %>

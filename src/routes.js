@@ -1,10 +1,14 @@
-import express from "express"
+import express from "express";
 
+// ========================================
+// Home
+// ========================================
 
-import {
-    homePage
-} from "./controllers/index.js"
+import { homePage } from "./controllers/index.js";
 
+// ========================================
+// Organizations
+// ========================================
 
 import {
     showOrganizationsPage,
@@ -16,8 +20,11 @@ import {
     processDeleteOrganization,
     organizationValidation,
     organizationEditValidation
-} from "./controllers/organizations.js"
+} from "./controllers/organizations.js";
 
+// ========================================
+// Projects
+// ========================================
 
 import {
     showProjectsPage,
@@ -27,8 +34,11 @@ import {
     showEditProjectForm,
     processEditProjectForm,
     projectValidation
-} from "./controllers/projects.js"
+} from "./controllers/projects.js";
 
+// ========================================
+// Categories
+// ========================================
 
 import {
     categoriesPage,
@@ -40,225 +50,230 @@ import {
     categoryValidation,
     showAssignCategoriesForm,
     processAssignCategoriesForm
-} from "./controllers/categories.js"
+} from "./controllers/categories.js";
 
+// ========================================
+// User Authentication and Authorization
+// ========================================
+
+import {
+    showRegisterForm,
+    processRegisterForm,
+    showLoginForm,
+    processLoginForm,
+    processLogout,
+    requireLogin,
+    requireRole,
+    showDashboard,
+    showUsersPage
+} from "./controllers/users.js";
+
+// ========================================
+// Error Handling
+// ========================================
 
 import {
     testError,
     notFound,
     errorHandler
-} from "./controllers/errors.js"
+} from "./controllers/errors.js";
 
-
-const router = express.Router()
-
+const router = express.Router();
 
 // ========================================
 // Home
 // ========================================
 
+router.get("/", homePage);
+
+// ========================================
+// Registration
+// ========================================
+
+router.get("/register", showRegisterForm);
+router.post("/register", processRegisterForm);
+
+// ========================================
+// Login and Logout
+// ========================================
+
+router.get("/login", showLoginForm);
+router.post("/login", processLoginForm);
+router.get("/logout", processLogout);
+
+// ========================================
+// Dashboard
+// ========================================
+
 router.get(
-    "/",
-    homePage
-)
-
+    "/dashboard",
+    requireLogin,
+    showDashboard
+);
 
 // ========================================
-// Organizations
+// Users Page - Admin Only
 // ========================================
 
-// List all organizations
+router.get(
+    "/users",
+    requireRole("admin"),
+    showUsersPage
+);
+
+// ========================================
+// Organizations - Public Viewing
+// ========================================
+
 router.get(
     "/organizations",
     showOrganizationsPage
-)
+);
 
-
-// Organization details
 router.get(
     "/organization/:id",
     showOrganizationDetailsPage
-)
-
+);
 
 // ========================================
-// New Organization
+// Organizations - Admin Only
 // ========================================
 
-// Display new organization form
 router.get(
     "/new-organization",
+    requireRole("admin"),
     showNewOrganizationForm
-)
+);
 
-
-// Process new organization form
 router.post(
     "/new-organization",
+    requireRole("admin"),
     organizationValidation,
     processNewOrganizationForm
-)
+);
 
-
-// ========================================
-// Edit Organization
-// ========================================
-
-// Display edit organization form
 router.get(
     "/edit-organization/:id",
+    requireRole("admin"),
     showEditOrganizationForm
-)
+);
 
-
-// Process edit organization form
 router.post(
     "/edit-organization/:id",
+    requireRole("admin"),
     organizationEditValidation,
     processEditOrganizationForm
-)
+);
 
-
-// ========================================
-// Delete Organization
-// ========================================
-
-// Process delete organization
 router.post(
     "/delete-organization/:id",
+    requireRole("admin"),
     processDeleteOrganization
-)
-
+);
 
 // ========================================
-// Projects
+// Projects - Public Viewing
 // ========================================
 
-// Upcoming projects
 router.get(
     "/projects",
     showProjectsPage
-)
+);
 
-
-// Project details
 router.get(
     "/project/:id",
     showProjectDetailsPage
-)
-
+);
 
 // ========================================
-// New Project
+// Projects - Admin Only
 // ========================================
 
-// Display new project form
 router.get(
     "/new-project",
+    requireRole("admin"),
     showNewProjectForm
-)
+);
 
-
-// Process new project form
 router.post(
     "/new-project",
+    requireRole("admin"),
     projectValidation,
     processNewProjectForm
-)
+);
 
-
-// ========================================
-// Edit Project
-// ========================================
-
-// Display edit project form
 router.get(
     "/edit-project/:id",
+    requireRole("admin"),
     showEditProjectForm
-)
+);
 
-
-// Process edit project form
 router.post(
     "/edit-project/:id",
+    requireRole("admin"),
     projectValidation,
     processEditProjectForm
-)
-
+);
 
 // ========================================
-// Categories
+// Categories - Public Viewing
 // ========================================
 
-// List all categories
 router.get(
     "/categories",
     categoriesPage
-)
+);
 
-
-// Category details
 router.get(
     "/category/:id",
     categoryDetailsPage
-)
-
+);
 
 // ========================================
-// New Category
+// Categories - Admin Only
 // ========================================
 
-// Display new category form
 router.get(
     "/new-category",
+    requireRole("admin"),
     showNewCategoryForm
-)
+);
 
-
-// Process new category form
 router.post(
     "/new-category",
+    requireRole("admin"),
     categoryValidation,
     processNewCategoryForm
-)
+);
 
-
-// ========================================
-// Edit Category
-// ========================================
-
-// Display edit category form
 router.get(
     "/edit-category/:id",
+    requireRole("admin"),
     showEditCategoryForm
-)
+);
 
-
-// Process edit category form
 router.post(
     "/edit-category/:id",
+    requireRole("admin"),
     categoryValidation,
     processEditCategoryForm
-)
-
+);
 
 // ========================================
-// Assign Categories to Project
+// Category Assignment - Admin Only
 // ========================================
 
-// Display assign categories form
 router.get(
     "/assign-categories/:projectId",
+    requireRole("admin"),
     showAssignCategoriesForm
-)
+);
 
-
-// Process assign categories form
 router.post(
     "/assign-categories/:projectId",
+    requireRole("admin"),
     processAssignCategoriesForm
-)
-
+);
 
 // ========================================
 // Error Testing
@@ -267,23 +282,14 @@ router.post(
 router.get(
     "/test-error",
     testError
-)
-
+);
 
 // ========================================
 // Error Handling
+// Keep these at the end.
 // ========================================
 
-// 404 handler
-router.use(
-    notFound
-)
+router.use(notFound);
+router.use(errorHandler);
 
-
-// Global error handler
-router.use(
-    errorHandler
-)
-
-
-export default router
+export default router;

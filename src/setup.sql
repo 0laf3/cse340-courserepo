@@ -2,10 +2,56 @@
 -- DROP TABLES IF THEY ALREADY EXIST
 -- ========================================
 
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS project_categories;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS service_project;
 DROP TABLE IF EXISTS organizations;
+
+
+-- ========================================
+-- ROLES TABLE
+-- ========================================
+
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT
+);
+
+
+-- ========================================
+-- INSERT INITIAL ROLES
+-- ========================================
+
+INSERT INTO roles (
+    role_name,
+    role_description
+)
+VALUES
+(
+    'user',
+    'Standard user with basic access'
+),
+(
+    'admin',
+    'Administrator with full system access'
+);
+
+
+-- ========================================
+-- USERS TABLE
+-- ========================================
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INTEGER REFERENCES roles(role_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 
 -- ========================================
@@ -202,10 +248,18 @@ CREATE TABLE categories (
 
 INSERT INTO categories (name)
 VALUES
-('Community Development'),
-('Environment & Sustainability'),
-('Community Support'),
-('Community Service & Volunteering');
+(
+    'Community Development'
+),
+(
+    'Environment & Sustainability'
+),
+(
+    'Community Support'
+),
+(
+    'Community Service & Volunteering'
+);
 
 
 -- ========================================
@@ -232,7 +286,10 @@ CREATE TABLE project_categories (
 -- ASSIGN PROJECTS TO CATEGORIES
 -- ========================================
 
-INSERT INTO project_categories (project_id, category_id)
+INSERT INTO project_categories (
+    project_id,
+    category_id
+)
 VALUES
 (1, 1),
 (2, 1),
@@ -273,4 +330,83 @@ JOIN project_categories AS pc
     ON sp.project_id = pc.project_id
 JOIN categories AS c
     ON pc.category_id = c.category_id
-ORDER BY sp.project_id, c.category_id;
+ORDER BY
+    sp.project_id,
+    c.category_id;
+
+
+-- ========================================
+-- VERIFY ROLES
+-- ========================================
+
+SELECT *
+FROM roles
+ORDER BY role_id;
+
+
+-- ========================================
+-- VERIFY USERS TABLE STRUCTURE
+-- ========================================
+
+SELECT
+    column_name,
+    data_type,
+    is_nullable,
+    column_default
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'users'
+ORDER BY ordinal_position;
+
+
+-- ========================================
+-- VERIFY USERS FOREIGN KEY
+-- ========================================
+
+SELECT
+    conname AS constraint_name,
+    pg_get_constraintdef(oid) AS constraint_definition
+FROM pg_constraint
+WHERE conrelid = 'public.users'::regclass
+  AND contype = 'f';
+
+
+-- ========================================
+-- TEST USERS AND ROLES RELATIONSHIP
+-- RUN THIS SECTION SEPARATELY WHEN NEEDED
+-- ========================================
+
+-- Insert a temporary test user:
+--
+-- INSERT INTO users (
+--     name,
+--     email,
+--     password_hash,
+--     role_id
+-- )
+-- SELECT
+--     'testuser',
+--     'test@example.com',
+--     'placeholder_hash',
+--     role_id
+-- FROM roles
+-- WHERE role_name = 'user';
+--
+-- Verify the relationship:
+--
+-- SELECT
+--     u.user_id,
+--     u.name,
+--     u.email,
+--     r.role_name,
+--     r.role_description,
+--     u.created_at
+-- FROM users AS u
+-- JOIN roles AS r
+--     ON u.role_id = r.role_id
+-- WHERE u.email = 'test@example.com';
+--
+-- Delete the temporary test user:
+--
+-- DELETE FROM users
+-- WHERE email = 'test@example.com';

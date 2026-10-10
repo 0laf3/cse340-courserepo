@@ -1,0 +1,62 @@
+<%- include('partials/header') %>
+
+<main class="container">
+    <h1><%= title %></h1>
+
+    <section class="dashboard-section">
+        <h2>Welcome, <%= name %>!</h2>
+
+        <p>You are logged in successfully.</p>
+
+        <div class="user-information">
+            <p>
+                <strong>Name:</strong>
+                <%= name %>
+            </p>
+
+            <p>
+                <strong>Email:</strong>
+                <%= email %>
+            </p>
+
+            <p>
+                <strong>Role:</strong>
+                <%= user.role_name %>
+            </p>
+        </div>
+    </section>
+
+    <% if (user && user.role_name === "admin") { %>
+        <section class="dashboard-section">
+            <h2>Administration</h2>
+
+            <p>
+                Manage registered users and review their assigned roles.
+            </p>
+
+            <p>
+                <a href="/users">View Registered Users</a>
+            </p>
+        </section>
+    <% } %>
+
+    <section class="dashboard-section">
+        <h2>Explore the Service Network</h2>
+
+        <ul>
+            <li><a href="/organizations">View Organizations</a></li>
+            <li><a href="/projects">View Projects</a></li>
+            <li><a href="/categories">View Categories</a></li>
+        </ul>
+    </section>
+
+    <section class="dashboard-section">
+        <h2>Account</h2>
+
+        <form action="/logout" method="POST">
+            <button type="submit">Log Out</button>
+        </form>
+    </section>
+</main>
+
+<%- include('partials/footer') %>

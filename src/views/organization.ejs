@@ -1,134 +1,85 @@
+
 <%- include("partials/header") %>
 
 <main>
-
-    <h1>
-        <%= organization.name %>
-    </h1>
+    <h1><%= organization.name %></h1>
 
     <section>
-
-        <h2>
-            Organization Details
-        </h2>
+        <h2>Organization Details</h2>
 
         <% if (organization.description) { %>
-
             <p>
-                <strong>
-                    Description:
-                </strong>
-
+                <strong>Description:</strong>
                 <%= organization.description %>
             </p>
-
         <% } %>
 
         <% if (organization.contact_email) { %>
-
             <p>
-                <strong>
-                    Contact Email:
-                </strong>
-
+                <strong>Contact Email:</strong>
                 <%= organization.contact_email %>
             </p>
-
         <% } %>
 
         <% if (organization.logo_filename) { %>
-
             <p>
                 <img
                     src="/images/<%= organization.logo_filename %>"
                     alt="<%= organization.name %> logo"
                 >
             </p>
-
         <% } %>
-
     </section>
 
-    <section>
+    <% if (user && user.role_name === "admin") { %>
+        <section>
+            <h2>Manage Organization</h2>
 
-        <h2>
-            Manage Organization
-        </h2>
+            <p>
+                <a href="/edit-organization/<%= organization.organization_id %>">
+                    Edit Organization
+                </a>
+            </p>
 
-        <p>
-            <a
-                href="/edit-organization/<%= organization.organization_id %>"
+            <form
+                action="/delete-organization/<%= organization.organization_id %>"
+                method="POST"
+                onsubmit="return confirm('Are you sure you want to delete this organization?');"
             >
-                Edit Organization
-            </a>
-        </p>
-
-        <form
-            action="/delete-organization/<%= organization.organization_id %>"
-            method="POST"
-            onsubmit="return confirm('Are you sure you want to delete this organization?');"
-        >
-
-            <button type="submit">
-                Delete Organization
-            </button>
-
-        </form>
-
-    </section>
+                <button type="submit">
+                    Delete Organization
+                </button>
+            </form>
+        </section>
+    <% } %>
 
     <section>
-
-        <h2>
-            Service Projects
-        </h2>
+        <h2>Service Projects</h2>
 
         <% if (
             typeof projects !== "undefined" &&
             Array.isArray(projects) &&
             projects.length > 0
         ) { %>
-
             <ul>
-
-                <% projects.forEach(
-                    project => {
-                %>
-
+                <% projects.forEach(project => { %>
                     <li>
-
-                        <a
-                            href="/project/<%= project.project_id %>"
-                        >
+                        <a href="/project/<%= project.project_id %>">
                             <%= project.title %>
                         </a>
 
                         <% if (project.date) { %>
-
-                            <span>
-                                —
-                                <%= project.date %>
-                            </span>
-
+                            <span>— <%= project.date %></span>
                         <% } %>
-
                     </li>
-
                 <% }) %>
-
             </ul>
-
         <% } else { %>
-
             <p>
-                This organization currently has no
-                service projects.
+                This organization currently has no service projects.
             </p>
-
         <% } %>
-
     </section>
-
 </main>
 
 <%- include("partials/footer") %>
