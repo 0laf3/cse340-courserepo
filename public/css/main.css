@@ -25,15 +25,18 @@ body {
     line-height: 1.6;
 }
 
-
 /* ===========================
    Navigation Bar
 =========================== */
 
+header {
+    background-color: var(--primary);
+}
+
 nav {
     background-color: var(--primary);
     padding: 1rem 5%;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 nav ul {
@@ -41,7 +44,8 @@ nav ul {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
 }
 
 nav li {
@@ -49,17 +53,15 @@ nav li {
 }
 
 nav a {
+    display: inline-block;
     color: var(--white);
     text-decoration: none;
     font-size: 1.1rem;
     font-weight: 600;
     padding: 0.6rem 1rem;
     border-radius: 5px;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
-
-
-/* Hover effect */
 
 nav a:hover,
 nav a:focus {
@@ -67,30 +69,40 @@ nav a:focus {
     color: var(--white);
 }
 
-
 /* ===========================
-   Main Content
+   Main Content and Typography
 =========================== */
 
 main {
-    max-width: 1200px;
-    margin: auto;
+    width: min(1200px, 100%);
+    margin: 0 auto;
     padding: 2rem 5%;
 }
-
 
 h1,
 h2,
 h3 {
     color: var(--dark);
     margin-bottom: 1rem;
+    line-height: 1.25;
 }
-
 
 p {
     margin-bottom: 1rem;
 }
 
+a {
+    color: #176b62;
+}
+
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 3px solid #f4a261;
+    outline-offset: 2px;
+}
 
 /* ===========================
    Images
@@ -101,7 +113,6 @@ img {
     height: auto;
     border-radius: 8px;
 }
-
 
 /* ===========================
    Cards / Organizations / Projects
@@ -114,164 +125,28 @@ img {
     padding: 1.5rem;
     margin: 1rem 0;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    transition: transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 
 .card:hover,
 .organization-card:hover,
 .project-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
+    box-shadow: 0 7px 16px rgba(0, 0, 0, 0.16);
 }
 
-
-/* ===========================
-   Categories Page
-=========================== */
-
-.category-list {
+.organization-grid,
+.project-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 1.5rem;
-    list-style: none;
-}
-
-
-.category-list li {
-    background-color: var(--white);
-    padding: 1.5rem;
-    border-left: 5px solid var(--accent);
-    border-radius: 8px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    font-weight: bold;
-}
-
-
-/* ===========================
-   Footer
-=========================== */
-
-footer {
-    background-color: var(--dark);
-    color: var(--white);
-    text-align: center;
-    padding: 1.5rem;
-    margin-top: 3rem;
-}
-
-
-/* ===========================
-   Accessibility
-=========================== */
-
-a:focus {
-    outline: 3px solid #f4a261;
-}
-
-
-/* ===========================
-   Mobile Responsive Navigation
-=========================== */
-
-@media screen and (max-width: 700px) {
-
-    nav ul {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-
-    nav li {
-        width: 100%;
-        text-align: center;
-    }
-
-
-    nav a {
-        display: block;
-        width: 100%;
-    }
-
-
-    main {
-        padding: 1rem;
-    }
-
-
-    h1 {
-        font-size: 1.8rem;
-    }
-
-    /* ===========================
-   Home Page
-=========================== */
-
-main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 3rem 5%;
-    text-align: center;
-}
-
-
-/* Page title */
-
-main h1 {
-    font-size: 2.5rem;
-    color: var(--primary);
-    margin-bottom: 1.5rem;
-}
-
-
-/* Welcome heading */
-
-main h2 {
-    font-size: 2rem;
-    color: var(--secondary);
-    margin-bottom: 1rem;
-}
-
-
-/* Description text */
-
-main p {
-    max-width: 800px;
-    margin: 0 auto 2rem auto;
-    font-size: 1.15rem;
-    line-height: 1.8;
-}
-
-
-/* Service Network Logo */
-
-.main-logo {
-    width: min(500px, 90%);
-    height: auto;
-    margin-top: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
-}
-
-
-.main-logo:hover {
-    transform: scale(1.03);
-}
-
-.organization-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
     margin-top: 2rem;
 }
 
 .organization-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
+    margin: 0;
     text-align: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
 
 .organization-card img {
@@ -282,14 +157,65 @@ main p {
 }
 
 .organization-card h2 {
-    color: #16324F;
+    color: #16324f;
 }
 
 .organization-card p {
-    color: #555;
+    color: #555555;
 }
 
-/* Categories Page */
+/* ===========================
+   Home Page
+=========================== */
+
+.home-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 5%;
+    text-align: center;
+}
+
+main:has(.main-logo) {
+    max-width: 1100px;
+    text-align: center;
+}
+
+main h1 {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+main h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--secondary);
+    margin-bottom: 1rem;
+}
+
+main:has(.main-logo) p {
+    max-width: 800px;
+    margin: 0 auto 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.main-logo {
+    display: block;
+    width: min(500px, 90%);
+    height: auto;
+    margin: 1rem auto 0;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.main-logo:hover {
+    transform: scale(1.03);
+}
+
+/* ===========================
+   Categories Page
+=========================== */
 
 .categories-page {
     max-width: 1100px;
@@ -300,60 +226,141 @@ main p {
 .categories-page h1 {
     text-align: center;
     color: #0a5c36;
-    margin-bottom: 10px;
+    margin-bottom: 0.75rem;
 }
 
 .intro {
     text-align: center;
-    margin-bottom: 30px;
-    color: #555;
+    margin-bottom: 2rem;
+    color: #555555;
 }
 
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
+    gap: 1.25rem;
+}
+
+.category-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    list-style: none;
+}
+
+.category-list li,
+.category-card {
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
+.category-list li {
+    padding: 1.5rem;
+    border-left: 5px solid var(--accent);
+    font-weight: 600;
 }
 
 .category-card {
-    background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 3px 8px rgba(0,0,0,.15);
-    transition: transform .3s ease;
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .category-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 7px 16px rgba(0, 0, 0, 0.16);
 }
 
 .category-card img {
+    display: block;
     width: 100%;
     height: 180px;
     object-fit: cover;
+    border-radius: 0;
 }
 
 .category-card h2 {
     color: #0a5c36;
-    margin: 15px 0 10px;
+    margin: 1rem 1rem 0.5rem;
 }
 
 .category-card p {
-    padding: 0 15px 20px;
-    color: #555;
-}
+    padding: 0 1rem 1rem;
+    margin-bottom: 0;
+    color: #555555;
 }
 
-/* ========================================
+/* ===========================
+   Forms and Buttons
+=========================== */
+
+form {
+    max-width: 700px;
+    margin: 1.5rem auto;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #aab4bf;
+    border-radius: 5px;
+    font: inherit;
+    background-color: var(--white);
+    color: var(--text);
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+button,
+input[type="submit"],
+.button {
+    display: inline-block;
+    width: auto;
+    padding: 0.7rem 1.2rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary);
+    color: var(--white);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover,
+input[type="submit"]:hover,
+.button:hover {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+/* ===========================
    Flash Messages
-   ======================================== */
+=========================== */
 
 .alert {
     padding: 15px;
-    margin-bottom: 20px;
+    margin: 1rem auto;
+    width: min(1100px, 90%);
     border: 1px solid transparent;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .alert p {
@@ -382,4 +389,66 @@ main p {
     color: #0c5460;
     background-color: #d1ecf1;
     border-color: #bee5eb;
+}
+
+/* ===========================
+   Footer
+=========================== */
+
+footer {
+    background-color: var(--dark);
+    color: var(--white);
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 3rem;
+}
+
+footer p {
+    margin-bottom: 0;
+}
+
+/* ===========================
+   Mobile Responsive Layout
+=========================== */
+
+@media screen and (max-width: 700px) {
+    nav {
+        padding: 0.75rem 1rem;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    nav li,
+    nav a {
+        width: 100%;
+        text-align: center;
+    }
+
+    main {
+        padding: 1.25rem 1rem;
+    }
+
+    .categories-page {
+        padding: 1.25rem 1rem;
+    }
+
+    .organization-grid,
+    .project-grid,
+    .categories-grid,
+    .category-list {
+        grid-template-columns: 1fr;
+    }
+
+    .card,
+    .organization-card,
+    .project-card {
+        padding: 1rem;
+    }
+
+    .category-card img {
+        height: 160px;
+    }
 }
