@@ -394,22 +394,22 @@ WHERE conrelid = 'public.users'::regclass
 --
 -- Verify the relationship:
 
- SELECT
-     u.user_id,
-     u.name,
-     u.email,
-     r.role_name,
-     r.role_description,
-     u.created_at
- FROM users AS u
- JOIN roles AS r
-     ON u.role_id = r.role_id
- WHERE u.email = 'test@example.com';
+ --SELECT
+     --u.user_id,
+     --u.name,
+     --u.email,
+     --r.role_name,
+     --r.role_description,
+   --  u.created_at
+ --FROM users AS u
+ --JOIN roles AS r
+   --  ON u.role_id = r.role_id
+ --WHERE u.email = 'test@example.com';
 
- Delete the temporary test user:
+ --Delete the temporary test user:
 
- DELETE FROM users
- WHERE email = 'test@example.com';
+ --DELETE FROM users
+-- WHERE email = 'test@example.com';
 
  SELECT * FROM users;
  SELECT * FROM roles;
