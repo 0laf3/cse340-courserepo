@@ -87,15 +87,15 @@ app.use((req, res, next) => {
 // ========================================
 // Development logging
 // ========================================
-
 app.use((req, res, next) => {
-    if (NODE_ENV === "development") {
-        console.log(`${req.method} ${req.url}`);
-    }
+    res.locals.NODE_ENV = NODE_ENV;
+    res.locals.isLoggedIn = Boolean(
+        req.session && req.session.user
+    );
+    res.locals.currentUser = req.session?.user || null;
 
     next();
 });
-
 // ========================================
 // Static files
 // CSS, images, JavaScript

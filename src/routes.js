@@ -44,7 +44,10 @@ import {
 
 import {
     showUserRegistrationForm,
-    processUserRegistrationForm
+    processUserRegistrationForm,
+    showLoginForm,
+    processLoginForm,
+    processLogout
 } from "./controllers/users.js";
 
 
@@ -277,17 +280,18 @@ router.get(
 // ========================================
 // User Registration
 // ========================================
+// Display user registration form
+router.get("/register", showUserRegistrationForm);
+router.post("/register", processUserRegistrationForm);
 
-router.get(
-    "/register",
-    showUserRegistrationForm
-);
 
-router.post(
-    "/register",
-    processUserRegistrationForm
-);
-
+// ========================================
+// User login and logout
+// ========================================
+// Display login form
+router.get("/login", showLoginForm);
+router.post("/login", processLoginForm);
+router.get("/logout", processLogout);
 
 // ========================================
 // Error Handling

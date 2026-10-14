@@ -37,11 +37,26 @@
                     Categories
                 </a>
             </li>
+            
+<% if (isLoggedIn) { %>
+            
             <li>
-                <a href="/register">
-                    Register
-                </a>
-            </li>   
+                <a href="/logout">Logout</a>
+            </li>
+            <li>
+                <span>
+                    Welcome, <%= currentUser.name %>
+                </span>
+            </li>
+        <% } else { %>
+            <li>
+                <a href="/register">Register</a>
+            </li>
+            <li>
+                <a href="/login">Login</a>
+            </li>
+        <% } %>
+
         </ul>
     </nav>
 
