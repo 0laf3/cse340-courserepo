@@ -1,17 +1,21 @@
-
 import bcrypt from "bcrypt";
-import { 
+import {
     createUser,
-    authenticateUser 
-    
+    authenticateUser
 } from "../models/users.js";
 
+/**
+ * Display the user registration form.
+ */
 export const showUserRegistrationForm = (req, res) => {
-    res.render("register", {
+    return res.render("register", {
         title: "Register"
     });
 };
 
+/**
+ * Process user registration.
+ */
 export const processUserRegistrationForm = async (req, res) => {
     const name =
         typeof req.body.name === "string"
@@ -56,7 +60,7 @@ export const processUserRegistrationForm = async (req, res) => {
             "Registration successful! Please log in."
         );
 
-        return res.redirect("/");
+        return res.redirect("/login");
     } catch (error) {
         if (error.code === "23505") {
             req.flash(
@@ -76,17 +80,22 @@ export const processUserRegistrationForm = async (req, res) => {
     }
 };
 
-
+/**
+ * Display the login form.
+ */
 export const showLoginForm = (req, res) => {
-    res.render("login", {
+    return res.render("login", {
         title: "Login"
     });
 };
 
+/**
+ * Process user login.
+ */
 export const processLoginForm = async (req, res) => {
     const email =
         typeof req.body.email === "string"
-            ? req.body.email.trim()
+            ? req.body.email.trim().toLowerCase()
             : "";
 
     const password =
@@ -107,53 +116,117 @@ export const processLoginForm = async (req, res) => {
             return res.redirect("/login");
         }
 
-        // Regenerate the session before saving authenticated user data.
-        req.session.regenerate((err) => {
-            if (err) {
-                console.error("Session regeneration failed:", err);
-                req.flash("error", "Unable to log in. Please try again.");
-                return res.redirect("/login");
-            }
-
-            req.session.user = user;
-
-            req.session.save((saveError) => {
-                if (saveError) {
-                    console.error("Session save failed:", saveError);
-                    return res.redirect("/login");
+        // Regenerate the session to help prevent session fixation.
+        await new Promise((resolve, reject) => {
+            req.session.regenerate((err) => {
+                if (err) {
+                    return reject(err);
                 }
 
-                req.flash("success", "Login successful!");
-
-                if (res.locals.NODE_ENV === "development") {
-                    // The user object does not contain password_hash.
-                    console.log("User logged in:", user);
-                }
-
-                return res.redirect("/");
+                return resolve();
             });
         });
+
+        // Store only the authenticated user's safe information.
+        req.session.user = user;
+
+        // Ensure the session is saved before redirecting.
+        await new Promise((resolve, reject) => {
+            req.session.save((err) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                return resolve();
+            });
+        });
+
+        if (res.locals.NODE_ENV === "development") {
+            console.log("User logged in:", {
+                user_id: user.user_id,
+                name: user.name,
+                email: user.email,
+                role_id: user.role_id
+            });
+        }
+
+        req.flash("success", "Login successful!");
+
+        return res.redirect("/dashboard");
     } catch (error) {
         console.error("Error during login:", error);
+
+        // Never attempt a second response.
+        if (res.headersSent) {
+            return;
+        }
+
         req.flash(
             "error",
-            "An error occurred during login. Please try again."
+            "Unable to log in. Please try again."
         );
+
         return res.redirect("/login");
     }
 };
 
-export const processLogout = (req, res) => {
+/**
+ * Log out the current user.
+ */
+export const processLogout = (req, res, next) => {
+    if (!req.session) {
+        return res.redirect("/login");
+    }
+
     req.session.destroy((error) => {
         if (error) {
             console.error("Error destroying session:", error);
-            req.flash("error", "Unable to log out. Please try again.");
-            return res.redirect("/");
+
+            if (res.headersSent) {
+                return;
+            }
+
+            return next(error);
         }
 
-        // The session is destroyed, so use a redirect message only if
-        // your flash middleware supports a separate post-session message.
         return res.redirect("/login");
     });
 };
 
+/**
+ * Middleware to protect routes that require authentication.
+ */
+export const requireLogin = (req, res, next) => {
+    if (!req.session || !req.session.user) {
+        req.flash(
+            "error",
+            "You must be logged in to access that page."
+        );
+
+        return res.redirect("/login");
+    }
+
+    return next();
+};
+
+/**
+ * Display the logged-in user's dashboard.
+ */
+export const showDashboard = (req, res) => {
+    if (!req.session || !req.session.user) {
+        req.flash(
+            "error",
+            "You must be logged in to access that page."
+        );
+
+        return res.redirect("/login");
+    }
+
+    const user = req.session.user;
+
+    return res.render("dashboard", {
+        title: "Dashboard",
+        name: user.name,
+        email: user.email
+    });
+};
