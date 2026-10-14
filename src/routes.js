@@ -42,6 +42,11 @@ import {
     processAssignCategoriesForm
 } from "./controllers/categories.js"
 
+import {
+    showUserRegistrationForm,
+    processUserRegistrationForm
+} from "./controllers/users.js";
+
 
 import {
     testError,
@@ -268,6 +273,20 @@ router.get(
     "/test-error",
     testError
 )
+
+// ========================================
+// User Registration
+// ========================================
+
+router.get(
+    "/register",
+    showUserRegistrationForm
+);
+
+router.post(
+    "/register",
+    processUserRegistrationForm
+);
 
 
 // ========================================
