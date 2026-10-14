@@ -34,10 +34,10 @@ export const processUserRegistrationForm = async (req, res) => {
         return res.redirect("/register");
     }
 
-    if (password.length < 8) {
+    if (password.length < 7) {
         req.flash(
             "error",
-            "Your password must contain at least 8 characters."
+            "Your password must contain at least 7 characters."
         );
         return res.redirect("/register");
     }
