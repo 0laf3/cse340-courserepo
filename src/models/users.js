@@ -51,21 +51,22 @@ export const createUser = async (name, email, passwordHash) => {
     return result.rows[0].user_id;
 };
 
-
 /**
- * Find a user by email address.
+ * Find a user by email address, including their role name.
  * This function is private to this model.
  */
 const findUserByEmail = async (email) => {
     const query = `
         SELECT
-            user_id,
-            name,
-            email,
-            password_hash,
-            role_id
-        FROM users
-        WHERE email = $1
+            u.user_id,
+            u.name,
+            u.email,
+            u.password_hash,
+            r.role_name
+        FROM users AS u
+        JOIN roles AS r
+            ON u.role_id = r.role_id
+        WHERE u.email = $1
     `;
 
     const result = await pool.query(query, [email]);
@@ -110,4 +111,3 @@ export const authenticateUser = async (email, password) => {
 
     return safeUser;
 };
-

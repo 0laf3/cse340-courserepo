@@ -1,3 +1,4 @@
+
 import express from "express";
 import session from "express-session";
 import { fileURLToPath } from "url";
@@ -33,10 +34,7 @@ const __dirname = path.dirname(__filename);
 // EJS configuration
 // ========================================
 
-app.set(
-    "view engine",
-    "ejs"
-);
+app.set("view engine", "ejs");
 
 app.set(
     "views",
@@ -47,9 +45,11 @@ app.set(
 // Request parsing middleware
 // ========================================
 
-app.use(express.urlencoded({
-    extended: true
-}));
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+);
 
 app.use(express.json());
 
@@ -70,38 +70,43 @@ app.use(
 
 // ========================================
 // Flash message middleware
-// IMPORTANT: Must come AFTER session
+// Must come after session middleware
 // ========================================
 
 app.use(flash);
 
 // ========================================
 // Global template variables
+// Available in all EJS views
 // ========================================
 
 app.use((req, res, next) => {
     res.locals.NODE_ENV = NODE_ENV;
-    next();
-});
 
-// ========================================
-// Development logging
-// ========================================
-app.use((req, res, next) => {
-    res.locals.NODE_ENV = NODE_ENV;
+    // Check whether a user is logged in.
     res.locals.isLoggedIn = Boolean(
         req.session && req.session.user
     );
-    res.locals.currentUser = req.session?.user || null;
+
+    // Make the session user available in EJS views.
+    // Includes role_name when the user is authenticated.
+    res.locals.user = req.session?.user || null;
+
+    // Preserve the existing currentUser variable
+    // for any templates that already use it.
+    res.locals.currentUser = res.locals.user;
 
     next();
 });
+
 // ========================================
 // Static files
 // CSS, images, JavaScript
 // ========================================
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(
+    express.static(path.join(__dirname, "public"))
+);
 
 // ========================================
 // Routes
@@ -114,20 +119,13 @@ app.use("/", routes);
 // ========================================
 
 app.listen(PORT, async () => {
-    console.log(
-        `Server running on port ${PORT}`
-    );
-
-    console.log(
-        `Environment: ${NODE_ENV}`
-    );
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${NODE_ENV}`);
 
     try {
         await testConnection();
 
-        console.log(
-            "Database connection successful."
-        );
+        console.log("Database connection successful.");
     } catch (error) {
         console.error(
             "Database connection failed:",

@@ -1,4 +1,6 @@
+
 import bcrypt from "bcrypt";
+
 import {
     createUser,
     authenticateUser
@@ -127,10 +129,11 @@ export const processLoginForm = async (req, res) => {
             });
         });
 
-        // Store only the authenticated user's safe information.
+        // Store only safe, authenticated user information.
+        // The user object now includes role_name.
         req.session.user = user;
 
-        // Ensure the session is saved before redirecting.
+        // Save the session before redirecting.
         await new Promise((resolve, reject) => {
             req.session.save((err) => {
                 if (err) {
@@ -146,7 +149,7 @@ export const processLoginForm = async (req, res) => {
                 user_id: user.user_id,
                 name: user.name,
                 email: user.email,
-                role_id: user.role_id
+                role_name: user.role_name
             });
         }
 
@@ -207,6 +210,39 @@ export const requireLogin = (req, res, next) => {
     }
 
     return next();
+};
+
+/**
+ * Middleware factory to require a specific user role.
+ *
+ * @param {string} role - Required role, such as "admin".
+ * @returns {Function} Express middleware.
+ */
+export const requireRole = (role) => {
+    return (req, res, next) => {
+        // Check whether the user is logged in.
+        if (!req.session || !req.session.user) {
+            req.flash(
+                "error",
+                "You must be logged in to access this page."
+            );
+
+            return res.redirect("/login");
+        }
+
+        // Check whether the user has the required role.
+        if (req.session.user.role_name !== role) {
+            req.flash(
+                "error",
+                "You do not have permission to access this page."
+            );
+
+            return res.redirect("/");
+        }
+
+        // The user has the required role.
+        return next();
+    };
 };
 
 /**
