@@ -1,113 +1,118 @@
-
 import pool from "./db.js";
 import bcrypt from "bcrypt";
 
 /**
- * Create a new user with the default user role.
+ * Create a new user.
+ * New registrations receive the "user" role.
  */
-export const createUser = async (name, email, passwordHash) => {
-    const defaultRole = "user";
+export const createUser = async (name, email, password) => {
+    try {
+        const passwordHash = await bcrypt.hash(password, 10);
 
-    const query = `
-        INSERT INTO users (
-            name,
-            email,
-            password_hash,
-            role_id
-        )
-        VALUES (
-            $1,
-            $2,
-            $3,
-            (
-                SELECT role_id
-                FROM roles
-                WHERE role_name = $4
+        const result = await pool.query(
+            `INSERT INTO users (
+                name,
+                email,
+                password_hash,
+                role_id
             )
-        )
-        RETURNING user_id
-    `;
-
-    const queryParams = [
-        name,
-        email,
-        passwordHash,
-        defaultRole
-    ];
-
-    const result = await pool.query(query, queryParams);
-
-    if (result.rows.length === 0) {
-        throw new Error("Failed to create user.");
-    }
-
-    if (process.env.ENABLE_SQL_LOGGING === "true") {
-        console.log(
-            "Created new user with ID:",
-            result.rows[0].user_id
+            VALUES (
+                $1,
+                $2,
+                $3,
+                (SELECT role_id FROM roles WHERE role_name = 'user')
+            )
+            RETURNING user_id, name, email`,
+            [name, email, passwordHash]
         );
-    }
 
-    return result.rows[0].user_id;
+        return result.rows[0];
+    } catch (error) {
+        console.error("Error creating user:", error);
+        throw error;
+    }
 };
 
 /**
- * Find a user by email address, including their role name.
- * This function is private to this model.
+ * Find a user by email.
+ * Includes the user's role for authentication.
  */
 const findUserByEmail = async (email) => {
-    const query = `
-        SELECT
-            u.user_id,
-            u.name,
-            u.email,
-            u.password_hash,
-            r.role_name
-        FROM users AS u
-        JOIN roles AS r
-            ON u.role_id = r.role_id
-        WHERE u.email = $1
-    `;
+    try {
+        const result = await pool.query(
+            `SELECT
+                u.user_id,
+                u.name,
+                u.email,
+                u.password_hash,
+                r.role_name
+            FROM users AS u
+            JOIN roles AS r
+                ON u.role_id = r.role_id
+            WHERE u.email = $1`,
+            [email]
+        );
 
-    const result = await pool.query(query, [email]);
-
-    if (result.rows.length === 0) {
-        return null;
+        return result.rows[0];
+    } catch (error) {
+        console.error("Error finding user:", error);
+        throw error;
     }
-
-    return result.rows[0];
 };
 
 /**
- * Compare a plain-text password with its bcrypt hash.
- */
-const verifyPassword = async (password, passwordHash) => {
-    return bcrypt.compare(password, passwordHash);
-};
-
-/**
- * Authenticate a user and return safe user information.
+ * Authenticate a user using their email and password.
  */
 export const authenticateUser = async (email, password) => {
-    const normalizedEmail = email.trim().toLowerCase();
+    try {
+        const normalizedEmail = email.trim().toLowerCase();
+        const user = await findUserByEmail(normalizedEmail);
 
-    const user = await findUserByEmail(normalizedEmail);
+        if (!user) {
+            return null;
+        }
 
-    if (!user) {
-        return null;
+        const passwordMatches = await bcrypt.compare(
+            password,
+            user.password_hash
+        );
+
+        if (!passwordMatches) {
+            return null;
+        }
+
+        const {
+            password_hash,
+            ...safeUser
+        } = user;
+
+        return safeUser;
+    } catch (error) {
+        console.error("Error authenticating user:", error);
+        throw error;
     }
+};
 
-    const passwordMatches = await verifyPassword(
-        password,
-        user.password_hash
-    );
+/**
+ * Retrieve all registered users and their roles.
+ */
+export const getAllUsers = async () => {
+    try {
+        const result = await pool.query(
+            `SELECT
+                u.user_id,
+                u.name,
+                u.email,
+                r.role_name
+            FROM users AS u
+            JOIN roles AS r
+                ON u.role_id = r.role_id
+            ORDER BY u.name ASC`
+        );
 
-    if (!passwordMatches) {
-        return null;
+        return result.rows;
+    } catch (error) {
+        console.error("Error retrieving users:", error);
+        throw error;
     }
-
-    // Never expose the password hash to the session or views.
-    const { password_hash, ...safeUser } = user;
-
-    return safeUser;
 };

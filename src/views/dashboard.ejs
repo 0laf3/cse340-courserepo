@@ -1,19 +1,63 @@
-
-<%- include('partials/header') %>
+<%- include("partials/header") %>
 
 <main>
     <h1><%= title %></h1>
 
-    <section class="dashboard">
-        <h2>Dashboard</h2>
-
-        <p>Name: <%= name %></p>
-        <p>Email: <%= email %></p>
+    <% if (user) { %>
+        <p>
+            Welcome, <strong><%= user.name %></strong>!
+        </p>
 
         <p>
-            <a href="/">Return to Home</a>
+            <strong>Email:</strong>
+            <%= user.email %>
         </p>
+
+        <p>
+            <strong>Role:</strong>
+            <%= user.role_name %>
+        </p>
+    <% } %>
+
+    <section>
+        <h2>Explore</h2>
+
+        <ul>
+            <li>
+                <a href="/">Home</a>
+            </li>
+            <li>
+                <a href="/organizations">Organizations</a>
+            </li>
+            <li>
+                <a href="/projects">Service Projects</a>
+            </li>
+            <li>
+                <a href="/categories">Categories</a>
+            </li>
+        </ul>
     </section>
+
+    <% if (user && user.role_name === "admin") { %>
+        <section>
+            <h2>Administration</h2>
+
+            <ul>
+                <li>
+                    <a href="/users">View Registered Users</a>
+                </li>
+                <li>
+                    <a href="/new-organization">Add Organization</a>
+                </li>
+                <li>
+                    <a href="/new-project">Add Service Project</a>
+                </li>
+                <li>
+                    <a href="/new-category">Add Category</a>
+                </li>
+            </ul>
+        </section>
+    <% } %>
 </main>
 
-<%- include('partials/footer') %>
+<%- include("partials/footer") %>

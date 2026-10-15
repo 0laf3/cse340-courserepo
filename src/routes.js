@@ -1,9 +1,7 @@
 
 import express from "express";
 
-import {
-    homePage
-} from "./controllers/index.js";
+import { homePage } from "./controllers/index.js";
 
 import {
     showOrganizationsPage,
@@ -47,7 +45,8 @@ import {
     processLogout,
     requireLogin,
     requireRole,
-    showDashboard
+    showDashboard,
+    showUsersPage
 } from "./controllers/users.js";
 
 import {
@@ -68,13 +67,8 @@ router.get("/", homePage);
 // Organizations
 // ========================================
 
-// List all organizations
-router.get(
-    "/organizations",
-    showOrganizationsPage
-);
+router.get("/organizations", showOrganizationsPage);
 
-// Organization details
 router.get(
     "/organization/:id",
     showOrganizationDetailsPage
@@ -84,16 +78,16 @@ router.get(
 // New Organization (ADMIN ONLY)
 // ========================================
 
-// Display new organization form
 router.get(
     "/new-organization",
+    requireLogin,
     requireRole("admin"),
     showNewOrganizationForm
 );
 
-// Process new organization form
 router.post(
     "/new-organization",
+    requireLogin,
     requireRole("admin"),
     organizationValidation,
     processNewOrganizationForm
@@ -103,16 +97,16 @@ router.post(
 // Edit Organization (ADMIN ONLY)
 // ========================================
 
-// Display edit organization form
 router.get(
     "/edit-organization/:id",
+    requireLogin,
     requireRole("admin"),
     showEditOrganizationForm
 );
 
-// Process edit organization form
 router.post(
     "/edit-organization/:id",
+    requireLogin,
     requireRole("admin"),
     organizationEditValidation,
     processEditOrganizationForm
@@ -124,6 +118,7 @@ router.post(
 
 router.post(
     "/delete-organization/:id",
+    requireLogin,
     requireRole("admin"),
     processDeleteOrganization
 );
@@ -132,13 +127,8 @@ router.post(
 // Projects
 // ========================================
 
-// List upcoming projects
-router.get(
-    "/projects",
-    showProjectsPage
-);
+router.get("/projects", showProjectsPage);
 
-// Project details
 router.get(
     "/project/:id",
     showProjectDetailsPage
@@ -148,16 +138,16 @@ router.get(
 // New Project (ADMIN ONLY)
 // ========================================
 
-// Display new project form
 router.get(
     "/new-project",
+    requireLogin,
     requireRole("admin"),
     showNewProjectForm
 );
 
-// Process new project form
 router.post(
     "/new-project",
+    requireLogin,
     requireRole("admin"),
     projectValidation,
     processNewProjectForm
@@ -167,16 +157,16 @@ router.post(
 // Edit Project (ADMIN ONLY)
 // ========================================
 
-// Display edit project form
 router.get(
     "/edit-project/:id",
+    requireLogin,
     requireRole("admin"),
     showEditProjectForm
 );
 
-// Process edit project form
 router.post(
     "/edit-project/:id",
+    requireLogin,
     requireRole("admin"),
     projectValidation,
     processEditProjectForm
@@ -186,13 +176,8 @@ router.post(
 // Categories
 // ========================================
 
-// List all categories
-router.get(
-    "/categories",
-    categoriesPage
-);
+router.get("/categories", categoriesPage);
 
-// Category details
 router.get(
     "/category/:id",
     categoryDetailsPage
@@ -202,16 +187,16 @@ router.get(
 // New Category (ADMIN ONLY)
 // ========================================
 
-// Display new category form
 router.get(
     "/new-category",
+    requireLogin,
     requireRole("admin"),
     showNewCategoryForm
 );
 
-// Process new category form
 router.post(
     "/new-category",
+    requireLogin,
     requireRole("admin"),
     categoryValidation,
     processNewCategoryForm
@@ -221,16 +206,16 @@ router.post(
 // Edit Category (ADMIN ONLY)
 // ========================================
 
-// Display edit category form
 router.get(
     "/edit-category/:id",
+    requireLogin,
     requireRole("admin"),
     showEditCategoryForm
 );
 
-// Process edit category form
 router.post(
     "/edit-category/:id",
+    requireLogin,
     requireRole("admin"),
     categoryValidation,
     processEditCategoryForm
@@ -240,16 +225,16 @@ router.post(
 // Assign Categories to Project (ADMIN ONLY)
 // ========================================
 
-// Display assign categories form
 router.get(
     "/assign-categories/:projectId",
+    requireLogin,
     requireRole("admin"),
     showAssignCategoriesForm
 );
 
-// Process assign categories form
 router.post(
     "/assign-categories/:projectId",
+    requireLogin,
     requireRole("admin"),
     processAssignCategoriesForm
 );
@@ -258,10 +243,7 @@ router.post(
 // Error Testing
 // ========================================
 
-router.get(
-    "/test-error",
-    testError
-);
+router.get("/test-error", testError);
 
 // ========================================
 // User Registration
@@ -307,13 +289,22 @@ router.get(
 );
 
 // ========================================
+// Users Page (ADMIN ONLY)
+// ========================================
+
+router.get(
+    "/users",
+    requireLogin,
+    requireRole("admin"),
+    showUsersPage
+);
+
+// ========================================
 // Error Handling
 // ========================================
 
-// 404 handler
+// Keep these handlers last.
 router.use(notFound);
-
-// Global error handler
 router.use(errorHandler);
 
 export default router;
